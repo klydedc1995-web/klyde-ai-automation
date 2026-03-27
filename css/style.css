@@ -822,6 +822,46 @@ ul { list-style: none; }
 .back-top.visible { opacity: 1; transform: translateY(0); }
 .back-top:hover { background: var(--white); transform: translateY(-2px); }
 
+/* ── HERO NO-PHOTO VARIANT ───────────────────────────────────── */
+.hero--no-photo .hero__content--centered {
+  justify-content: center;
+  max-width: 820px;
+  margin: 0 auto;
+}
+.hero--no-photo .hero__text {
+  text-align: center;
+}
+.hero--no-photo .hero__sub { margin: 0 auto 2rem; }
+.hero--no-photo .hero__actions { justify-content: center; }
+.hero--no-photo .hero__stats { justify-content: center; }
+.hero--no-photo .hero__eyebrow { justify-content: center; }
+
+.hero__tagline {
+  font-family: var(--font-head);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--green);
+  margin-bottom: 0.75rem;
+}
+
+/* ── PULL SHARK ACHIEVEMENT IMAGE ────────────────────────────── */
+.proof-card__achievement-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 12px rgba(0,207,255,0.4));
+}
+
+/* ── FOOTER SEO TEXT ─────────────────────────────────────────── */
+.footer__seo {
+  font-size: 0.68rem;
+  color: rgba(122, 129, 153, 0.4);
+  text-align: center;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
 /* ── ANIMATIONS ──────────────────────────────────────────────── */
 .fade-in {
   opacity: 0;
