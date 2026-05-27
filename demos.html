@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Demos | Klyde Del Castillo · AI Automation</title>
+  <meta name="description" content="Live interactive demos of AI automation systems built for real estate, law firms, accounting, construction, and service businesses." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .demos-hero {
+      padding: 8rem 0 4rem;
+      background: var(--bg);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .demos-hero__bg-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,207,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,207,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .demos-hero__glow {
+      position: absolute; border-radius: 50%;
+      filter: blur(100px); pointer-events: none;
+      width: 500px; height: 500px;
+      background: rgba(0,207,255,0.08);
+      top: -150px; left: 50%; transform: translateX(-50%);
+    }
+    .demos-hero__content { position: relative; z-index: 1; }
+    .demos-hero p {
+      font-size: 1rem; color: var(--text-muted);
+      max-width: 580px; margin: 0 auto 1rem; line-height: 1.7;
+    }
+    .demos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      padding: 4rem 0 6rem;
+    }
+    .demo-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      display: flex; flex-direction: column;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .demo-card:hover {
+      border-color: var(--border-glow);
+      box-shadow: var(--shadow-cyan);
+      transform: translateY(-6px);
+    }
+    .demo-card__icon {
+      font-size: 2.5rem; margin-bottom: 1.25rem;
+    }
+    .demo-card__industry {
+      font-family: var(--font-head);
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 0.5rem;
+    }
+    .demo-card h3 {
+      font-family: var(--font-head);
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--white); margin-bottom: 0.75rem;
+      line-height: 1.35;
+    }
+    .demo-card p {
+      font-size: 0.855rem; color: var(--text-muted);
+      line-height: 1.6; flex: 1; margin-bottom: 1.5rem;
+    }
+    .demo-card__cta {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.4rem;
+      background: var(--cyan); color: #000;
+      border-radius: 100px;
+      font-family: var(--font-head);
+      font-size: 0.82rem; font-weight: 700;
+      transition: var(--transition);
+      width: fit-content;
+    }
+    .demo-card:hover .demo-card__cta {
+      background: var(--white);
+    }
+    .demos-back {
+      padding: 3rem 0 2rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    @media (max-width: 1024px) { .demos-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 600px)  { .demos-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <a href="index.html" class="nav__logo">KA<span>.</span></a>
+    <ul class="nav__links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#tools">Tools</a></li>
+      <li><a href="index.html#projects">Work</a></li>
+      <li><a href="demos.html" style="color: var(--cyan);">Demos</a></li>
+      <li><a href="index.html#proof">Proof</a></li>
+      <li><a href="index.html#contact" class="nav__cta">Hire Me</a></li>
+    </ul>
+    <button class="nav__burger" id="burger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- DEMOS HERO -->
+  <section class="demos-hero">
+    <div class="demos-hero__bg-grid"></div>
+    <div class="demos-hero__glow"></div>
+    <div class="container demos-hero__content">
+      <div class="section-label">Interactive Demos</div>
+      <h1 class="section-title">See the automations<br/><em>in action</em></h1>
+      <p>Each demo below is a live, interactive simulation of an AI-powered automation system built for a specific industry. Click any card to explore how it works.</p>
+    </div>
+  </section>
+
+  <!-- DEMOS GRID -->
+  <section style="background: var(--bg-2);">
+    <div class="container">
+      <div class="demos-grid">
+
+        <a href="demos/ai-receptionist.html" class="demo-card">
+          <div class="demo-card__icon">🤖</div>
+          <div class="demo-card__industry">Service Business</div>
+          <h3>AI Receptionist & Lead Intake System</h3>
+          <p>An always-on AI front desk that qualifies leads, books appointments, and routes inquiries — without a human receptionist.</p>
+          <span class="demo-card__cta">▶ Launch Demo</span>
+        </a>
+
+        <a href="demos/accounting.html" class="demo-card">
+          <div class="demo-card__icon">📊</div>
+          <div class="demo-card__industry">Accounting & Finance</div>
+          <h3>Accounting Workflow Automation</h3>
+          <p>Automated invoice processing, expense categorization, and client reporting — eliminating manual data entry for accounting firms.</p>
+          <span class="demo-card__cta">▶ Launch Demo</span>
+        </a>
+
+        <a href="demos/real-estate.html" class="demo-card">
+          <div class="demo-card__icon">🏠</div>
+          <div class="demo-card__industry">Real Estate</div>
+          <h3>Real Estate Lead & Listing Automation</h3>
+          <p>Instant lead response, property matching, and follow-up sequences that keep buyers and sellers engaged automatically.</p>
+          <span class="demo-card__cta">▶ Launch Demo</span>
+        </a>
+
+        <a href="demos/law-firm.html" class="demo-card">
+          <div class="demo-card__icon">⚖️</div>
+          <div class="demo-card__industry">Legal</div>
+          <h3>Law Firm Client Intake Automation</h3>
+          <p>Automated intake forms, conflict checks, appointment scheduling, and document collection — before a lawyer ever picks up the phone.</p>
+          <span class="demo-card__cta">▶ Launch Demo</span>
+        </a>
+
+        <a href="demos/construction.html" class="demo-card">
+          <div class="demo-card__icon">🏗️</div>
+          <div class="demo-card__industry">Construction</div>
+          <h3>Construction Project & Quote Automation</h3>
+          <p>Lead capture, quote generation, subcontractor coordination, and job status updates — all automated across your project pipeline.</p>
+          <span class="demo-card__cta">▶ Launch Demo</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BACK + CTA -->
+  <section class="demos-back" style="background: var(--bg);">
+    <div class="container">
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">
+        Want one of these built for your business?
+      </p>
+      <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <a href="index.html" class="btn btn--ghost">← Back to Portfolio</a>
+        <a href="index.html#contact" class="btn btn--primary">Book a Discovery Call</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2025 Klyde Alan Miguel Del Castillo · LogicPrompt AI · Built with purpose.</p>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+    const burger = document.getElementById('burger');
+    const navLinks = document.querySelector('.nav__links');
+    burger.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+  </script>
+
+</body>
+</html>

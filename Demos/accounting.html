@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LogicPrompt AI — Accounting Automation</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c10;
+  --surface: #111318;
+  --surface2: #181b22;
+  --surface3: #1e222c;
+  --border: #252a36;
+  --border2: #2e3545;
+  --purple: #7c6ef7;
+  --purple-dim: #3d3580;
+  --purple-glow: rgba(124,110,247,0.12);
+  --teal: #2dd4a0;
+  --teal-dim: #174d3a;
+  --teal-glow: rgba(45,212,160,0.1);
+  --amber: #f5a623;
+  --amber-dim: #4a3209;
+  --red: #f05454;
+  --red-dim: #3d1616;
+  --text: #e8eaf0;
+  --text2: #8892a4;
+  --text3: #4a5468;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* GRID BACKGROUND */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(124,110,247,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,110,247,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+
+/* HEADER */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 32px; padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--purple); display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 13px; font-weight: 600; color: #fff;
+}
+.logo-name { font-size: 13px; font-weight: 500; color: var(--text2); letter-spacing: .04em; }
+.logo-name span { color: var(--text); }
+.status-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--teal-glow); border: 1px solid var(--teal-dim);
+  border-radius: 20px; padding: 4px 12px; font-size: 11px; color: var(--teal);
+  font-family: var(--mono);
+}
+.pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
+
+/* STAGE NAV */
+.stage-nav {
+  display: flex; gap: 0; margin-bottom: 28px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden;
+}
+.stage-btn {
+  flex: 1; padding: 10px 6px; background: transparent; border: none;
+  border-right: 1px solid var(--border); color: var(--text3);
+  font-family: var(--mono); font-size: 11px; cursor: pointer;
+  transition: all .2s; display: flex; flex-direction: column;
+  align-items: center; gap: 3px; position: relative;
+}
+.stage-btn:last-child { border-right: none; }
+.stage-btn .snum { font-size: 10px; opacity: .5; }
+.stage-btn .sicon { font-size: 16px; }
+.stage-btn.active {
+  background: var(--purple-glow); color: var(--purple);
+  border-bottom: 2px solid var(--purple);
+}
+.stage-btn.done { color: var(--teal); }
+.stage-btn.done::after {
+  content: '✓'; position: absolute; top: 4px; right: 6px;
+  font-size: 9px; color: var(--teal);
+}
+
+/* MAIN PANEL */
+.panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden; margin-bottom: 16px;
+}
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+.panel-title { font-family: var(--mono); font-size: 12px; color: var(--text2); }
+.panel-title span { color: var(--purple); }
+.panel-body { padding: 20px; }
+
+/* CARDS */
+.card {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px;
+}
+.card + .card { margin-top: 10px; }
+
+/* BADGES */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  padding: 2px 8px; border-radius: 4px;
+}
+.badge-purple { background: var(--purple-glow); color: var(--purple); border: 1px solid var(--purple-dim); }
+.badge-teal { background: var(--teal-glow); color: var(--teal); border: 1px solid var(--teal-dim); }
+.badge-amber { background: rgba(245,166,35,.1); color: var(--amber); border: 1px solid var(--amber-dim); }
+.badge-red { background: rgba(240,84,84,.1); color: var(--red); border: 1px solid var(--red-dim); }
+
+/* ROWS */
+.data-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.data-row:last-child { border-bottom: none; }
+.data-label { color: var(--text2); font-size: 12px; }
+.data-val { font-family: var(--mono); color: var(--text); }
+
+/* ACTION BUTTONS */
+.actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+.btn {
+  padding: 9px 20px; border-radius: 8px; font-family: var(--mono);
+  font-size: 12px; font-weight: 500; cursor: pointer; border: none;
+  transition: all .2s; letter-spacing: .02em;
+}
+.btn-primary {
+  background: var(--purple); color: #fff;
+  box-shadow: 0 0 20px rgba(124,110,247,.25);
+}
+.btn-primary:hover { background: #9080f9; box-shadow: 0 0 28px rgba(124,110,247,.4); transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--border2);
+}
+.btn-ghost:hover { border-color: var(--purple-dim); color: var(--purple); }
+.btn-danger { background: rgba(240,84,84,.15); color: var(--red); border: 1px solid var(--red-dim); }
+.btn-danger:hover { background: rgba(240,84,84,.25); }
+.btn-success { background: rgba(45,212,160,.15); color: var(--teal); border: 1px solid var(--teal-dim); }
+.btn-success:hover { background: rgba(45,212,160,.25); }
+.btn:disabled { opacity: .35; cursor: not-allowed; transform: none !important; }
+
+/* PROGRESS BAR */
+.progress-wrap { margin: 12px 0; }
+.progress-bar {
+  height: 3px; background: var(--border); border-radius: 2px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 2px; background: var(--purple);
+  transition: width 1.4s cubic-bezier(.4,0,.2,1);
+}
+
+/* INBOX */
+.inbox-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; cursor: pointer;
+  border-bottom: 1px solid var(--border); transition: background .15s;
+}
+.inbox-item:hover { background: var(--surface3); }
+.inbox-item.selected { background: var(--purple-glow); border-left: 2px solid var(--purple); }
+.inbox-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--purple); margin-top: 5px; flex-shrink: 0; }
+.inbox-dot.read { background: var(--border2); }
+.inbox-from { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.inbox-subject { font-size: 12px; color: var(--text2); }
+.inbox-meta { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.inbox-time { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-left: auto; flex-shrink: 0; }
+
+/* AI PROCESSING */
+.ai-log {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px; font-family: var(--mono); font-size: 12px;
+  line-height: 1.8; min-height: 120px;
+}
+.log-line { display: flex; gap: 10px; margin-bottom: 2px; opacity: 0; transform: translateY(4px); }
+.log-line.show { animation: logIn .3s ease forwards; }
+@keyframes logIn { to { opacity: 1; transform: translateY(0); } }
+.log-time { color: var(--text3); flex-shrink: 0; }
+.log-tag { flex-shrink: 0; }
+.log-tag.ok { color: var(--teal); }
+.log-tag.warn { color: var(--amber); }
+.log-tag.err { color: var(--red); }
+.log-tag.info { color: var(--purple); }
+.log-msg { color: var(--text2); }
+
+/* XERO TABLE */
+.xero-frame {
+  border: 1px solid #1a3a5c; border-radius: 8px; overflow: hidden;
+}
+.xero-top {
+  background: #0d2137; padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 11px; color: #5aabdd;
+}
+.xero-table { width: 100%; border-collapse: collapse; }
+.xero-table th {
+  background: #0d1e2e; padding: 8px 12px;
+  text-align: left; font-family: var(--mono); font-size: 10px;
+  color: #3d6a8a; text-transform: uppercase; letter-spacing: .06em;
+  border-bottom: 1px solid #1a3a5c;
+}
+.xero-table td {
+  padding: 10px 12px; border-bottom: 1px solid #111f2d;
+  font-size: 13px; color: #c8d8e8;
+}
+.xero-table tr:last-child td { border-bottom: none; }
+.xero-table tr.new-row td { background: rgba(45,212,160,.05); }
+.xero-table tr.new-row td:first-child { border-left: 2px solid var(--teal); }
+
+/* EXCEPTION CARDS */
+.exc-card {
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 10px;
+  border: 1px solid; position: relative; overflow: hidden;
+}
+.exc-card.exc-red { background: var(--red-dim); border-color: rgba(240,84,84,.3); }
+.exc-card.exc-amber { background: var(--amber-dim); border-color: rgba(245,166,35,.3); }
+.exc-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+}
+.exc-card.exc-red::before { background: var(--red); }
+.exc-card.exc-amber::before { background: var(--amber); }
+.exc-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.exc-card.exc-red .exc-title { color: #f08080; }
+.exc-card.exc-amber .exc-title { color: #f5c06f; }
+.exc-body { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
+.exc-actions { display: flex; gap: 8px; }
+
+/* REPORT */
+.report-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.metric-card {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px; text-align: center;
+}
+.metric-n { font-family: var(--mono); font-size: 26px; font-weight: 600; margin-bottom: 4px; }
+.metric-l { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; }
+.chart-bar-wrap { display: flex; align-items: flex-end; gap: 6px; height: 80px; margin: 8px 0 4px; }
+.chart-bar {
+  flex: 1; border-radius: 3px 3px 0 0; background: var(--purple-dim);
+  transition: height .8s cubic-bezier(.4,0,.2,1), background .3s;
+  position: relative; min-height: 4px;
+}
+.chart-bar:hover { background: var(--purple); }
+.chart-bar.highlight { background: var(--purple); }
+.chart-labels { display: flex; gap: 6px; }
+.chart-lbl { flex: 1; font-family: var(--mono); font-size: 9px; color: var(--text3); text-align: center; }
+
+/* OUTCOME */
+.outcome-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.outcome-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.outcome-row:last-child { border-bottom: none; }
+.before-val { font-family: var(--mono); color: var(--red); }
+.after-val { font-family: var(--mono); color: var(--teal); }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 100;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+  font-size: 13px; transform: translateY(80px); opacity: 0;
+  transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  max-width: 320px; box-shadow: 0 8px 32px rgba(0,0,0,.5);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-icon { font-size: 16px; }
+
+/* DIFF HIGHLIGHT */
+@keyframes flashIn { 0%{background:rgba(45,212,160,.3)} 100%{background:rgba(45,212,160,.05)} }
+.flash { animation: flashIn 1.5s ease forwards; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* HELP */
+.help-text {
+  font-size: 12px; color: var(--text3); margin-top: 12px;
+  padding: 10px 14px; background: var(--surface2); border-radius: 6px;
+  border-left: 2px solid var(--purple-dim);
+}
+</style>
+</head>
+<body>
+
+  <!-- DEMO NAV BAR -->
+<div style="position:fixed; top:0; left:0; right:0; z-index:9999; background:rgba(13,15,20,0.95); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,0.07); padding:0.75rem 5%; display:flex; align-items:center; justify-content:space-between; font-family:'DM Sans',sans-serif;">
+  <a href="../demos.html" style="color:#00cfff; font-size:0.85rem; font-weight:600; text-decoration:none;">← Back to Demos</a>
+  <a href="../index.html#contact" style="background:#00cfff; color:#000; padding:0.4rem 1rem; border-radius:100px; font-size:0.8rem; font-weight:700; text-decoration:none;">Book a Call</a>
+</div>
+<div style="height:52px;"></div>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-mark">LP</div>
+      <div class="logo-name"><span>LogicPrompt AI</span> — Accounting Automation</div>
+    </div>
+    <div class="status-pill">
+      <div class="pulse"></div>
+      <span id="status-text">SYSTEM IDLE</span>
+    </div>
+  </div>
+
+  <!-- STAGE NAV -->
+  <div class="stage-nav" role="tablist" aria-label="Automation stages">
+    <button class="stage-btn active" onclick="goStage(0)" id="tab0" role="tab">
+      <span class="snum">01</span>
+      <span class="sicon">📥</span>
+      <span>INBOX</span>
+    </button>
+    <button class="stage-btn" onclick="goStage(1)" id="tab1" role="tab">
+      <span class="snum">02</span>
+      <span class="sicon">🤖</span>
+      <span>AI READ</span>
+    </button>
+    <button class="stage-btn" onclick="goStage(2)" id="tab2" role="tab">
+      <span class="snum">03</span>
+      <span class="sicon">📊</span>
+      <span>XERO</span>
+    </button>
+    <button class="stage-btn" onclick="goStage(3)" id="tab3" role="tab">
+      <span class="snum">04</span>
+      <span class="sicon">⚠️</span>
+      <span>EXCEPTIONS</span>
+    </button>
+    <button class="stage-btn" onclick="goStage(4)" id="tab4" role="tab">
+      <span class="snum">05</span>
+      <span class="sicon">📈</span>
+      <span>REPORT</span>
+    </button>
+    <button class="stage-btn" onclick="goStage(5)" id="tab5" role="tab">
+      <span class="snum">06</span>
+      <span class="sicon">🏆</span>
+      <span>OUTCOME</span>
+    </button>
+  </div>
+
+  <!-- STAGE 0: INBOX -->
+  <div id="stage0" class="stage">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">accounts@sayersco.co.nz — <span>inbox</span></div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3)">3 unread</div>
+      </div>
+      <div id="inbox-list">
+        <div class="inbox-item" id="inv-buildright" onclick="selectInvoice('buildright')">
+          <div class="inbox-dot"></div>
+          <div style="flex:1">
+            <div class="inbox-from">BuildRight NZ <span style="font-weight:300;color:var(--text3)">&lt;invoices@buildright.co.nz&gt;</span></div>
+            <div class="inbox-subject">Invoice #2847 — June services — $14,200.00 + GST 📎</div>
+            <div class="inbox-meta">Attachment: Invoice_2847_BuildRight.pdf (84kb)</div>
+          </div>
+          <div class="inbox-time">9:07 AM</div>
+        </div>
+        <div class="inbox-item" id="inv-duplicate" onclick="selectInvoice('duplicate')">
+          <div class="inbox-dot"></div>
+          <div style="flex:1">
+            <div class="inbox-from">BuildRight NZ <span style="font-weight:300;color:var(--text3)">&lt;invoices@buildright.co.nz&gt;</span></div>
+            <div class="inbox-subject">Invoice #2847 — RESEND — June services 📎</div>
+            <div class="inbox-meta">Attachment: Invoice_2847_RESEND.pdf (84kb)</div>
+          </div>
+          <div class="inbox-time">9:14 AM</div>
+        </div>
+        <div class="inbox-item" id="inv-unknown" onclick="selectInvoice('unknown')">
+          <div class="inbox-dot"></div>
+          <div style="flex:1">
+            <div class="inbox-from">Pacific Fitout Ltd <span style="font-weight:300;color:var(--text3)">&lt;billing@pacificfitout.co.nz&gt;</span></div>
+            <div class="inbox-subject">TAX INVOICE #0041 — Fitout works — $8,750.00 📎</div>
+            <div class="inbox-meta">Attachment: INV_0041_PacificFitout.pdf (112kb)</div>
+          </div>
+          <div class="inbox-time">10:22 AM</div>
+        </div>
+        <div class="inbox-item">
+          <div class="inbox-dot read"></div>
+          <div style="flex:1">
+            <div class="inbox-from" style="color:var(--text2);font-weight:400">Spark NZ</div>
+            <div class="inbox-subject">Tax invoice — May account — $189.00</div>
+          </div>
+          <div class="inbox-time">Yesterday</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" id="invoice-preview" style="display:none">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:12px">PDF PREVIEW — SELECTED INVOICE</div>
+      <div id="preview-content"></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" id="btn-process" onclick="startProcessing()" disabled>
+        ▶ Process selected invoice with AI
+      </button>
+      <button class="btn btn-ghost" onclick="resetAll()">↺ Reset demo</button>
+    </div>
+    <div class="help-text">
+      ← Select an invoice from the inbox above, then click "Process" to watch the AI handle it.
+      Try all three — each triggers a different scenario.
+    </div>
+  </div>
+
+  <!-- STAGE 1: AI READING -->
+  <div id="stage1" class="stage" style="display:none">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">AI analysis — <span id="ai-filename">processing...</span></div>
+        <div id="ai-badge" class="badge badge-purple">● RUNNING</div>
+      </div>
+      <div class="panel-body">
+        <div class="progress-wrap">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:11px;color:var(--text3);font-family:var(--mono)" id="ai-step-label">Initialising...</span>
+            <span style="font-size:11px;color:var(--purple);font-family:var(--mono)" id="ai-pct">0%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="ai-progress" style="width:0%"></div></div>
+        </div>
+        <div class="ai-log" id="ai-log"></div>
+      </div>
+    </div>
+    <div class="panel" id="extraction-panel" style="display:none">
+      <div class="panel-header">
+        <div class="panel-title">Extracted data — <span>verified fields</span></div>
+        <div id="extract-status" class="badge badge-teal">✓ CLEAN</div>
+      </div>
+      <div class="panel-body" id="extraction-body"></div>
+    </div>
+    <div class="actions" id="ai-actions" style="display:none"></div>
+  </div>
+
+  <!-- STAGE 2: XERO -->
+  <div id="stage2" class="stage" style="display:none">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Xero — <span>bills awaiting approval</span></div>
+        <div style="font-family:var(--mono);font-size:11px;color:#5aabdd">● CONNECTED</div>
+      </div>
+      <div class="panel-body" style="padding:0">
+        <div class="xero-frame">
+          <div class="xero-top">
+            <span style="font-size:14px">🗂</span> Accounts Payable — Sayers &amp; Co.
+            <span class="badge badge-teal" style="margin-left:auto" id="xero-badge">Auto-posted</span>
+          </div>
+          <table class="xero-table">
+            <thead>
+              <tr>
+                <th>Supplier</th><th>Invoice #</th><th>Amount (NZD)</th>
+                <th>Category</th><th>Due</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="xero-tbody">
+              <tr>
+                <td>Spark NZ</td><td>#SPARK-0521</td><td>$189.00</td>
+                <td>Telecoms</td><td>20 May</td>
+                <td><span class="badge badge-teal">Ready</span></td>
+              </tr>
+              <tr>
+                <td>NZ Couriers</td><td>#NZC-0093</td><td>$340.00</td>
+                <td>Freight</td><td>18 May</td>
+                <td><span class="badge badge-teal">Ready</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-success" onclick="approveXero()">✓ Approve bill in Xero</button>
+      <button class="btn btn-ghost" onclick="goStage(3)">View exceptions →</button>
+    </div>
+    <div class="help-text">
+      The bill has been auto-posted. One click to approve — no typing, no category selection, no manual matching.
+    </div>
+  </div>
+
+  <!-- STAGE 3: EXCEPTIONS -->
+  <div id="stage3" class="stage" style="display:none">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Exception log — <span id="exc-count">0 flagged</span></div>
+        <div class="badge badge-amber" id="exc-badge">REVIEW NEEDED</div>
+      </div>
+      <div class="panel-body" id="exc-body">
+        <div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">
+          No exceptions yet — process invoices to populate this log.
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="goStage(4)">View weekly report →</button>
+    </div>
+  </div>
+
+  <!-- STAGE 4: WEEKLY REPORT -->
+  <div id="stage4" class="stage" style="display:none">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Weekly reconciliation — <span>auto-generated Monday 7:30 AM</span></div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3)">Week ending 14 Jun 2026</div>
+      </div>
+      <div class="panel-body">
+        <div class="report-grid">
+          <div class="metric-card">
+            <div class="metric-n" style="color:var(--purple)" id="rpt-processed">73</div>
+            <div class="metric-l">Invoices processed</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-n" style="color:var(--teal)">$0</div>
+            <div class="metric-l">Manual entry time</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-n" style="color:var(--amber)" id="rpt-exceptions">3</div>
+            <div class="metric-l">Exceptions flagged</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Daily volume — this week</div>
+          <div class="chart-bar-wrap" id="report-chart"></div>
+          <div class="chart-labels" id="report-labels"></div>
+        </div>
+
+        <div style="margin-bottom:8px">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Spend by category</div>
+          <div id="spend-cats"></div>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="downloadReport()">↓ Download report PDF</button>
+      <button class="btn btn-ghost" onclick="goStage(5)">View firm outcome →</button>
+    </div>
+  </div>
+
+  <!-- STAGE 5: OUTCOME -->
+  <div id="stage5" class="stage" style="display:none">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Accounting firm outcome — <span>Sayers &amp; Co. Auckland</span></div>
+        <div class="badge badge-teal">LIVE SYSTEM</div>
+      </div>
+      <div class="panel-body">
+        <div class="report-grid" style="margin-bottom:20px">
+          <div class="metric-card">
+            <div class="metric-n" style="color:var(--teal)">5 hrs</div>
+            <div class="metric-l">Saved weekly</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-n" style="color:var(--purple)">$26k</div>
+            <div class="metric-l">Annual labour saved</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-n" style="color:var(--amber)">&lt;6 wks</div>
+            <div class="metric-l">Payback period</div>
+          </div>
+        </div>
+
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">Before vs after</div>
+        <div class="card">
+          <div class="outcome-row">
+            <span style="color:var(--text2)">Invoice data entry</span>
+            <div style="display:flex;gap:20px">
+              <span class="before-val">3–4 hrs/day</span>
+              <span style="color:var(--text3)">→</span>
+              <span class="after-val">0 hrs</span>
+            </div>
+          </div>
+          <div class="outcome-row">
+            <span style="color:var(--text2)">Error detection</span>
+            <div style="display:flex;gap:20px">
+              <span class="before-val">Month-end</span>
+              <span style="color:var(--text3)">→</span>
+              <span class="after-val">Same day</span>
+            </div>
+          </div>
+          <div class="outcome-row">
+            <span style="color:var(--text2)">Partner Fridays</span>
+            <div style="display:flex;gap:20px">
+              <span class="before-val">Data entry</span>
+              <span style="color:var(--text3)">→</span>
+              <span class="after-val">Advisory work</span>
+            </div>
+          </div>
+          <div class="outcome-row">
+            <span style="color:var(--text2)">Process consistency</span>
+            <div style="display:flex;gap:20px">
+              <span class="before-val">Team-dependent</span>
+              <span style="color:var(--text3)">→</span>
+              <span class="after-val">100% consistent</span>
+            </div>
+          </div>
+          <div class="outcome-row">
+            <span style="color:var(--text2)">Xero reconciliation</span>
+            <div style="display:flex;gap:20px">
+              <span class="before-val">Manual, weekly</span>
+              <span style="color:var(--text3)">→</span>
+              <span class="after-val">Auto, daily</span>
+            </div>
+          </div>
+          <div class="outcome-row" style="border-bottom:none">
+            <span style="color:var(--text2);font-weight:500">Annual labour cost (75 inv/wk)</span>
+            <div style="display:flex;gap:20px">
+              <span class="before-val" style="font-size:16px">$31,200</span>
+              <span style="color:var(--text3)">→</span>
+              <span class="after-val" style="font-size:16px">&lt;$5,000</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;padding:16px;background:var(--purple-glow);border:1px solid var(--purple-dim);border-radius:8px">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px">INVESTMENT</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+            <div>
+              <div style="font-size:22px;font-weight:600;color:var(--text)">$1,300 – $1,800 <span style="font-size:14px;color:var(--text2)">NZD one-time</span></div>
+              <div style="font-size:12px;color:var(--text2);margin-top:2px">+ $250–400/mo retainer (optional) · Delivered in 7–10 business days</div>
+            </div>
+            <button class="btn btn-primary" onclick="bookCall()">Book scoping call →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="resetAll()">↺ Run demo again</button>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">✓</span>
+  <span id="toast-msg">Done</span>
+</div>
+
+<script>
+const state = {
+  currentStage: 0,
+  selectedInvoice: null,
+  exceptions: [],
+  xeroRows: [],
+  processed: 0
+};
+
+const invoices = {
+  buildright: {
+    from: 'BuildRight NZ', email: 'invoices@buildright.co.nz',
+    file: 'Invoice_2847_BuildRight.pdf',
+    fields: {
+      'Supplier': 'BuildRight NZ',
+      'Invoice #': '2847',
+      'Invoice date': '3 June 2026',
+      'Due date': '15 June 2026',
+      'Amount (excl. GST)': '$14,200.00',
+      'GST (15%)': '$2,130.00',
+      'Total payable': '$16,330.00',
+    },
+    checks: { 'Supplier match': true, 'Duplicate check': true, 'GST validation': true },
+    scenario: 'clean',
+    xero: { supplier:'BuildRight NZ', num:'#2847', amount:'$16,330.00', cat:'Construction costs', due:'15 Jun' }
+  },
+  duplicate: {
+    from: 'BuildRight NZ', email: 'invoices@buildright.co.nz',
+    file: 'Invoice_2847_RESEND.pdf',
+    fields: {
+      'Supplier': 'BuildRight NZ',
+      'Invoice #': '2847',
+      'Invoice date': '3 June 2026',
+      'Due date': '15 June 2026',
+      'Amount (excl. GST)': '$14,200.00',
+      'GST (15%)': '$2,130.00',
+      'Total payable': '$16,330.00',
+    },
+    checks: { 'Supplier match': true, 'Duplicate check': false, 'GST validation': true },
+    scenario: 'duplicate',
+    xero: null
+  },
+  unknown: {
+    from: 'Pacific Fitout Ltd', email: 'billing@pacificfitout.co.nz',
+    file: 'INV_0041_PacificFitout.pdf',
+    fields: {
+      'Supplier': 'Pacific Fitout Ltd',
+      'Invoice #': '0041',
+      'Invoice date': '10 June 2026',
+      'Due date': '24 June 2026',
+      'Amount (excl. GST)': '$8,750.00',
+      'GST (15%)': '$1,312.50',
+      'Total payable': '$10,062.50',
+    },
+    checks: { 'Supplier match': false, 'Duplicate check': true, 'GST validation': true },
+    scenario: 'unknown',
+    xero: { supplier:'Pacific Fitout Ltd', num:'#0041', amount:'$10,062.50', cat:'⚠ Unassigned', due:'24 Jun' }
+  }
+};
+
+function selectInvoice(key) {
+  state.selectedInvoice = key;
+  document.querySelectorAll('.inbox-item').forEach(el => el.classList.remove('selected'));
+  document.getElementById('inv-' + key).classList.add('selected');
+
+  const inv = invoices[key];
+  document.getElementById('invoice-preview').style.display = 'block';
+  let html = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+    <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">📎 ${inv.file}</span>
+    <span class="badge badge-purple">PDF</span>
+  </div>`;
+  for (const [k,v] of Object.entries(inv.fields)) {
+    const big = k === 'Total payable';
+    html += `<div class="data-row">
+      <span class="data-label">${k}</span>
+      <span class="data-val" style="${big?'color:var(--purple);font-size:15px':''}">${v}</span>
+    </div>`;
+  }
+  document.getElementById('preview-content').innerHTML = html;
+  document.getElementById('btn-process').disabled = false;
+  setStatus('INVOICE SELECTED — READY TO PROCESS');
+}
+
+function setStatus(txt) {
+  document.getElementById('status-text').textContent = txt;
+}
+
+const logLines = {
+  buildright: [
+    [200,  'info', 'PDF attachment detected — Invoice_2847_BuildRight.pdf'],
+    [700,  'info', 'Extracting document structure...'],
+    [1300, 'ok',   'Supplier identified — BuildRight NZ (known supplier ✓)'],
+    [1800, 'ok',   'Invoice fields extracted — 7 fields, 0 ambiguous'],
+    [2400, 'ok',   'GST calculation verified — $14,200 × 15% = $2,130 ✓'],
+    [2900, 'ok',   'Duplicate check passed — invoice #2847 not seen before'],
+    [3400, 'ok',   'Xero supplier match confirmed — BuildRight NZ (ID: XR-0042)'],
+    [3900, 'ok',   'Category assigned — Construction costs (auto)'],
+    [4400, 'ok',   'Bill created in Xero — draft, awaiting approval'],
+    [4800, 'ok',   'Processing complete — no exceptions raised'],
+  ],
+  duplicate: [
+    [200,  'info', 'PDF attachment detected — Invoice_2847_RESEND.pdf'],
+    [700,  'info', 'Extracting document structure...'],
+    [1300, 'ok',   'Supplier identified — BuildRight NZ (known supplier ✓)'],
+    [1800, 'ok',   'Invoice fields extracted — 7 fields, 0 ambiguous'],
+    [2400, 'ok',   'GST calculation verified — $14,200 × 15% = $2,130 ✓'],
+    [2900, 'warn', 'Duplicate detected — invoice #2847 from BuildRight NZ already exists'],
+    [3400, 'warn', 'Previously posted: 3 June 2026 — same supplier, same amount'],
+    [3900, 'err',  'EXCEPTION RAISED — Bill held, not posted to Xero'],
+    [4400, 'err',  'Owner notification sent — action required'],
+  ],
+  unknown: [
+    [200,  'info', 'PDF attachment detected — INV_0041_PacificFitout.pdf'],
+    [700,  'info', 'Extracting document structure...'],
+    [1300, 'warn', 'Supplier "Pacific Fitout Ltd" not found in Xero contacts'],
+    [1800, 'ok',   'Invoice fields extracted — 7 fields, 0 ambiguous'],
+    [2400, 'ok',   'GST calculation verified — $8,750 × 15% = $1,312.50 ✓'],
+    [2900, 'ok',   'Duplicate check passed — invoice #0041 not seen before'],
+    [3400, 'warn', 'Category cannot be auto-assigned — unknown supplier'],
+    [3900, 'warn', 'EXCEPTION RAISED — Bill held pending supplier confirmation'],
+    [4400, 'warn', 'Owner notification sent — please confirm category before posting'],
+  ]
+};
+
+async function startProcessing() {
+  const key = state.selectedInvoice;
+  const inv = invoices[key];
+  goStage(1);
+  document.getElementById('ai-filename').textContent = inv.file;
+  document.getElementById('ai-log').innerHTML = '';
+  document.getElementById('extraction-panel').style.display = 'none';
+  document.getElementById('ai-actions').style.display = 'none';
+  document.getElementById('ai-badge').textContent = '● RUNNING';
+  document.getElementById('ai-badge').className = 'badge badge-purple';
+  setStatus('AI PROCESSING — ' + inv.file.toUpperCase());
+
+  const lines = logLines[key];
+  const total = lines[lines.length - 1][0] + 400;
+
+  for (const [delay, tag, msg] of lines) {
+    await sleep(delay === lines[0][0] ? 100 : delay - (lines[lines.indexOf(lines.find(l=>l[0]===delay))-1]?.[0]||0));
+    const pct = Math.round((delay / total) * 90);
+    document.getElementById('ai-progress').style.width = pct + '%';
+    document.getElementById('ai-pct').textContent = pct + '%';
+    document.getElementById('ai-step-label').textContent = msg;
+    addLog(tag, msg);
+  }
+
+  await sleep(400);
+  document.getElementById('ai-progress').style.width = '100%';
+  document.getElementById('ai-pct').textContent = '100%';
+
+  const isException = inv.scenario !== 'clean';
+  document.getElementById('ai-badge').textContent = isException ? '⚠ EXCEPTION' : '✓ COMPLETE';
+  document.getElementById('ai-badge').className = isException ? 'badge badge-amber' : 'badge badge-teal';
+  document.getElementById('ai-step-label').textContent = isException ? 'Exception raised — held for review' : 'All checks passed — posted to Xero';
+  setStatus(isException ? 'EXCEPTION FLAGGED' : 'INVOICE PROCESSED ✓');
+
+  showExtraction(key, inv);
+  state.processed++;
+}
+
+function addLog(tag, msg) {
+  const log = document.getElementById('ai-log');
+  const now = new Date();
+  const ts = now.toTimeString().slice(0,8);
+  const tagMap = { ok: '[  OK  ]', warn: '[ WARN ]', err: '[ ERR  ]', info: '[ INFO ]' };
+  const div = document.createElement('div');
+  div.className = 'log-line';
+  div.innerHTML = `<span class="log-time">${ts}</span><span class="log-tag ${tag}">${tagMap[tag]}</span><span class="log-msg">${msg}</span>`;
+  log.appendChild(div);
+  requestAnimationFrame(() => div.classList.add('show'));
+  log.scrollTop = log.scrollHeight;
+}
+
+function showExtraction(key, inv) {
+  const isException = inv.scenario !== 'clean';
+  const panel = document.getElementById('extraction-panel');
+  panel.style.display = 'block';
+
+  if (isException) {
+    document.getElementById('extract-status').textContent = '⚠ EXCEPTION';
+    document.getElementById('extract-status').className = 'badge badge-amber';
+  }
+
+  let html = '';
+  for (const [k,v] of Object.entries(inv.fields)) {
+    const big = k === 'Total payable';
+    html += `<div class="data-row"><span class="data-label">${k}</span><span class="data-val" style="${big?'color:var(--purple);font-size:15px':''}">${v}</span></div>`;
+  }
+  html += '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">';
+  for (const [k,v] of Object.entries(inv.checks)) {
+    const ok = v;
+    html += `<div class="data-row">
+      <span class="data-label">${k}</span>
+      <span class="badge ${ok?'badge-teal':'badge-red'}">${ok ? '✓ PASS' : '✗ FAIL'}</span>
+    </div>`;
+  }
+  html += '</div>';
+  document.getElementById('extraction-body').innerHTML = html;
+
+  const actionsEl = document.getElementById('ai-actions');
+  actionsEl.style.display = 'flex';
+
+  if (inv.scenario === 'clean') {
+    actionsEl.innerHTML = `
+      <button class="btn btn-primary" onclick="proceedToXero()">View Xero update →</button>
+      <button class="btn btn-ghost" onclick="goStage(3)">Skip to exceptions</button>`;
+    addException(null);
+  } else if (inv.scenario === 'duplicate') {
+    addException({
+      type: 'red',
+      title: 'Duplicate invoice detected',
+      body: 'Invoice #2847 from BuildRight NZ has already been posted on 3 June 2026 for the same amount ($16,330.00). This resend has been held and NOT posted to Xero.',
+      actions: [
+        { label: 'Ignore duplicate', cls: 'btn-success', fn: 'resolveExc(0,"ignored")' },
+        { label: 'Mark for review', cls: 'btn-ghost', fn: 'resolveExc(0,"review")' }
+      ]
+    });
+    actionsEl.innerHTML = `
+      <button class="btn btn-danger" onclick="goStage(3)">View exception →</button>
+      <button class="btn btn-ghost" onclick="goStage(4)">Skip to report</button>`;
+  } else {
+    addException({
+      type: 'amber',
+      title: 'Unknown supplier — category required',
+      body: '"Pacific Fitout Ltd" is not in your Xero contacts. The bill has been held. Please confirm the expense category before it can be posted.',
+      actions: [
+        { label: 'Assign: Construction costs', cls: 'btn-success', fn: 'assignAndPost()' },
+        { label: 'Add as new supplier', cls: 'btn-ghost', fn: 'resolveExc(1,"new-supplier")' }
+      ]
+    });
+    actionsEl.innerHTML = `
+      <button class="btn btn-danger" onclick="goStage(3)">View exception →</button>
+      <button class="btn btn-ghost" onclick="goStage(4)">Skip to report</button>`;
+  }
+}
+
+function addException(exc) {
+  if (!exc) return;
+  state.exceptions.push(exc);
+  updateExceptionBadge();
+}
+
+function updateExceptionBadge() {
+  const n = state.exceptions.length;
+  document.getElementById('exc-count').textContent = n + ' flagged';
+  renderExceptions();
+}
+
+function renderExceptions() {
+  const body = document.getElementById('exc-body');
+  if (!state.exceptions.length) {
+    body.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">No exceptions — all invoices processed cleanly.</div>';
+    return;
+  }
+  body.innerHTML = state.exceptions.map((e, i) => `
+    <div class="exc-card exc-${e.type}" id="exc-card-${i}">
+      <div class="exc-title">${e.title}</div>
+      <div class="exc-body">${e.body}</div>
+      ${e.resolved ? `<span class="badge badge-teal">✓ RESOLVED</span>` :
+        `<div class="exc-actions">${e.actions.map(a => `<button class="btn ${a.cls}" onclick="${a.fn}">${a.label}</button>`).join('')}</div>`}
+    </div>`).join('');
+}
+
+function resolveExc(i, how) {
+  state.exceptions[i].resolved = how;
+  renderExceptions();
+  updateReportCounts();
+  toast('✓', `Exception resolved — ${how === 'ignored' ? 'marked as duplicate, ignored' : how}`);
+}
+
+function assignAndPost() {
+  resolveExc(1 < state.exceptions.length ? state.exceptions.length - 1 : 0, 'assigned');
+  const inv = invoices.unknown;
+  state.xeroRows.push({ ...inv.xero, cat: 'Construction costs' });
+  renderXero();
+  toast('✓', 'Pacific Fitout Ltd posted to Xero — Construction costs');
+}
+
+function proceedToXero() {
+  const key = state.selectedInvoice;
+  const inv = invoices[key];
+  if (inv.xero) {
+    state.xeroRows.push(inv.xero);
+    renderXero();
+  }
+  goStage(2);
+}
+
+function renderXero() {
+  const tbody = document.getElementById('xero-tbody');
+  const existing = `<tr>
+    <td>Spark NZ</td><td>#SPARK-0521</td><td>$189.00</td>
+    <td>Telecoms</td><td>20 May</td>
+    <td><span class="badge badge-teal">Ready</span></td>
+  </tr>
+  <tr>
+    <td>NZ Couriers</td><td>#NZC-0093</td><td>$340.00</td>
+    <td>Freight</td><td>18 May</td>
+    <td><span class="badge badge-teal">Ready</span></td>
+  </tr>`;
+  const newRows = state.xeroRows.map(r => `
+    <tr class="new-row flash">
+      <td>${r.supplier}</td><td>${r.num}</td><td>${r.amount}</td>
+      <td>${r.cat}</td><td>${r.due}</td>
+      <td><span class="badge badge-teal" id="xero-status-row">Draft</span></td>
+    </tr>`).join('');
+  tbody.innerHTML = existing + newRows;
+}
+
+function approveXero() {
+  document.querySelectorAll('#xero-status-row').forEach(el => {
+    el.textContent = 'Ready';
+  });
+  toast('✓', 'Bill approved in Xero — reconciliation updated');
+  updateReportCounts();
+}
+
+function updateReportCounts() {
+  const base = 73;
+  document.getElementById('rpt-processed').textContent = base + state.processed;
+  document.getElementById('rpt-exceptions').textContent = state.exceptions.length;
+}
+
+function buildReport() {
+  const days = ['Mon','Tue','Wed','Thu','Fri'];
+  const vals = [14, 18, 11, 20, 10 + state.processed];
+  const max = Math.max(...vals);
+  const chart = document.getElementById('report-chart');
+  const labels = document.getElementById('report-labels');
+  chart.innerHTML = vals.map((v, i) => {
+    const h = Math.round((v / max) * 76);
+    const hi = i === vals.length - 1;
+    return `<div class="chart-bar ${hi?'highlight':''}" style="height:${h}px" title="${v} invoices"></div>`;
+  }).join('');
+  labels.innerHTML = days.map(d => `<div class="chart-lbl">${d}</div>`).join('');
+
+  const cats = [
+    { name: 'Construction costs', amt: '$68,400', pct: 72 },
+    { name: 'Professional services', amt: '$14,200', pct: 28 },
+    { name: 'Telecoms & freight', amt: '$2,890', pct: 8 },
+  ];
+  document.getElementById('spend-cats').innerHTML = cats.map(c => `
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+        <span style="color:var(--text2)">${c.name}</span>
+        <span style="font-family:var(--mono);color:var(--text)">${c.amt}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${c.pct}%"></div></div>
+    </div>`).join('');
+}
+
+function goStage(n) {
+  document.querySelectorAll('.stage').forEach((el, i) => {
+    el.style.display = i === n ? 'block' : 'none';
+  });
+  document.querySelectorAll('.stage-btn').forEach((el, i) => {
+    el.classList.toggle('active', i === n);
+    if (i < n) el.classList.add('done'); else el.classList.remove('done');
+  });
+  state.currentStage = n;
+  if (n === 3) renderExceptions();
+  if (n === 4) { buildReport(); updateReportCounts(); }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toast(icon, msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function downloadReport() {
+  toast('↓', 'Report export triggered — PDF download simulated');
+}
+
+function bookCall() {
+  toast('📅', 'Opening booking flow — LogicPrompt AI scoping call');
+}
+
+function resetAll() {
+  state.selectedInvoice = null;
+  state.exceptions = [];
+  state.xeroRows = [];
+  state.processed = 0;
+  document.querySelectorAll('.inbox-item').forEach(el => el.classList.remove('selected'));
+  document.getElementById('invoice-preview').style.display = 'none';
+  document.getElementById('btn-process').disabled = true;
+  document.getElementById('extract-status').textContent = '✓ CLEAN';
+  document.getElementById('extract-status').className = 'badge badge-teal';
+  renderXero();
+  setStatus('SYSTEM IDLE');
+  goStage(0);
+  toast('↺', 'Demo reset — select a new invoice to begin');
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+buildReport();
+</script>
+</body>
+</html>

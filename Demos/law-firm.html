@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LogicPrompt AI — Law Firm Demo | Ng & Partners, Wellington</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#09090b;--void2:#111114;--void3:#18181c;
+  --slab:#1c1c22;--slab2:#22222a;--slab3:#2a2a34;
+  --gold:#c9a84c;--gold2:#b8943a;--glo:rgba(201,168,76,.10);--gmd:rgba(201,168,76,.20);
+  --sage:#4a9e7a;--slo:rgba(74,158,122,.12);
+  --rose:#c25a5a;--rlo:rgba(194,90,90,.12);
+  --sky:#5a8ec2;--blo:rgba(90,142,194,.12);
+  --tx:#e8e6e1;--tx2:#9896a0;--tx3:#5a5868;
+  --bd:#28282e;--bd2:#323240;
+  --serif:'Playfair Display',Georgia,serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--void);color:var(--tx);font-family:var(--body);font-size:15px;line-height:1.7;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(201,168,76,.05) 0%,transparent 60%),
+  radial-gradient(ellipse 40% 60% at 100% 100%,rgba(74,158,122,.03) 0%,transparent 50%);}
+.app{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:0 24px 100px;}
+
+/* HDR */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:22px 0 20px;border-bottom:1px solid var(--bd);margin-bottom:40px;}
+.brand{display:flex;align-items:center;gap:14px;}
+.seal{width:38px;height:38px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.03em;}
+.bname{font-family:var(--serif);font-size:17px;color:var(--tx);}
+.bname em{color:var(--gold);font-style:italic;}
+.livepill{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--sage);background:var(--slo);border:1px solid rgba(74,158,122,.25);padding:5px 12px;border-radius:3px;letter-spacing:.06em;}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--sage);animation:dp 2s infinite;}
+@keyframes dp{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* HERO */
+.hero{margin-bottom:44px;}
+.htag{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.htag::before{content:'';width:20px;height:1px;background:var(--gold);}
+.h1{font-family:var(--serif);font-size:clamp(34px,5vw,54px);font-weight:400;line-height:1.15;color:var(--tx);margin-bottom:12px;}
+.h1 em{color:var(--gold);font-style:italic;}
+.h1 strong{font-weight:700;}
+.hsub{font-size:15px;color:var(--tx2);max-width:580px;line-height:1.8;margin-bottom:30px;font-weight:300;}
+.statrow{display:flex;gap:0;border:1px solid var(--bd);border-radius:4px;overflow:hidden;max-width:640px;background:var(--void2);}
+.stat{flex:1;padding:16px 18px;border-right:1px solid var(--bd);}
+.stat:last-child{border-right:none;}
+.sn{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--gold);line-height:1;}
+.sl{font-family:var(--mono);font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-top:5px;}
+
+/* CHAPTER RAIL */
+.rail{display:flex;gap:0;margin-bottom:36px;border:1px solid var(--bd);border-radius:4px;overflow:hidden;background:var(--void2);}
+.rb{flex:1;padding:12px 6px;background:transparent;border:none;border-right:1px solid var(--bd);color:var(--tx3);font-family:var(--mono);font-size:11px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.3;letter-spacing:.03em;}
+.rb:last-child{border-right:none;}
+.rb .rn{font-size:9px;opacity:.5;}
+.rb .ri{font-size:16px;}
+.rb.active{background:var(--gold);color:var(--void);}
+.rb.active .rn{opacity:.7;}
+.rb.done{color:var(--sage);}
+.rb.done .rn{opacity:1;}
+
+/* STAGE */
+.stage{display:none;animation:sli .28s ease;}
+.stage.on{display:block;}
+@keyframes sli{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* PANELS */
+.panel{background:var(--slab);border:1px solid var(--bd);border-radius:4px;overflow:hidden;margin-bottom:16px;}
+.pbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--void3);border-bottom:1px solid var(--bd);}
+.ptitle{font-family:var(--serif);font-size:15px;color:var(--tx);}
+.ptitle em{color:var(--gold);font-style:italic;}
+.pbody{padding:22px;}
+
+/* STAGE HEAD */
+.shead{margin-bottom:26px;}
+.stag{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;}
+.stitle{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--tx);line-height:1.25;margin-bottom:8px;}
+.stitle em{color:var(--gold);font-style:italic;}
+.sdesc{font-size:14px;color:var(--tx2);line-height:1.8;max-width:680px;font-weight:300;}
+
+/* PAIN */
+.pcards{display:flex;flex-direction:column;gap:10px;}
+.pcard{display:flex;align-items:flex-start;gap:16px;padding:16px 18px;border:1px solid var(--bd);border-radius:4px;background:var(--void2);cursor:pointer;transition:all .2s;}
+.pcard:hover{border-color:var(--bd2);background:var(--slab);}
+.pcard.hot{border-color:var(--rose);background:var(--rlo);}
+.pico{width:36px;height:36px;border-radius:3px;background:var(--rlo);border:1px solid rgba(194,90,90,.3);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.ptit{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--tx);margin-bottom:4px;}
+.pbod{font-size:13px;color:var(--tx2);line-height:1.7;font-weight:300;}
+.pcost{font-family:var(--mono);font-size:11px;color:var(--rose);margin-top:6px;}
+
+/* COST TABLE */
+.ctab{background:var(--void2);border:1px solid var(--bd);border-radius:4px;padding:20px 22px;margin-bottom:16px;}
+.crow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);font-size:14px;}
+.crow:last-child{border-bottom:none;}
+.cl{color:var(--tx2);font-weight:300;}
+.cv{font-family:var(--mono);color:var(--tx);}
+.cv.g{color:var(--gold);}
+.cv.r{color:var(--rose);}
+.cv.s{color:var(--sage);}
+
+/* DOCUMENT VIEWER */
+.docview{background:#f5f2ec;border-radius:4px;overflow:hidden;border:1px solid #d4cfc5;margin-bottom:16px;}
+.docbar{background:#e8e3d8;padding:10px 16px;border-bottom:1px solid #d4cfc5;display:flex;align-items:center;justify-content:space-between;}
+.doctitle{font-family:var(--mono);font-size:11px;color:#5a5548;font-weight:500;}
+.docbody{padding:20px 24px;font-family:'Source Serif 4',Georgia,serif;font-size:13px;color:#2a2820;line-height:1.9;max-height:320px;overflow-y:auto;}
+.docbody h3{font-size:13px;font-weight:700;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.06em;color:#1a1810;}
+.docbody p{margin-bottom:10px;}
+.clause-highlight{background:rgba(201,168,76,.25);border-left:3px solid #c9a84c;padding:2px 6px;border-radius:2px;cursor:pointer;}
+.clause-risk{background:rgba(194,90,90,.2);border-left:3px solid #c25a5a;padding:2px 6px;border-radius:2px;cursor:pointer;}
+.clause-deadline{background:rgba(90,142,194,.2);border-left:3px solid #5a8ec2;padding:2px 6px;border-radius:2px;cursor:pointer;}
+
+/* AI CONSOLE */
+.console{background:#06060a;border:1px solid var(--bd);border-radius:4px;overflow:hidden;margin-bottom:16px;}
+.cbar{display:flex;align-items:center;gap:8px;padding:9px 14px;background:#0a0a0e;border-bottom:1px solid var(--bd);}
+.cdot{width:10px;height:10px;border-radius:50%;}
+.cdot.r{background:#ff5f57;}.cdot.y{background:#febc2e;}.cdot.g{background:#28c840;}
+.ctit{font-family:var(--mono);font-size:11px;color:var(--tx3);margin-left:4px;}
+.cbody{padding:14px 16px;font-family:var(--mono);font-size:12px;line-height:1.9;min-height:80px;}
+.tl{opacity:0;transform:translateY(3px);display:flex;gap:10px;}
+.tl.show{animation:tlin .22s ease forwards;}
+@keyframes tlin{to{opacity:1;transform:translateY(0)}}
+.tt{color:var(--tx3);flex-shrink:0;}
+.tk{flex-shrink:0;}
+.tk.ok{color:var(--sage);}.tk.warn{color:var(--gold);}.tk.err{color:var(--rose);}.tk.info{color:var(--sky);}
+.tm{color:#a0a0b0;}
+
+/* SUMMARY CARD */
+.sumcard{background:white;border-radius:4px;overflow:hidden;border:1px solid #d4d0ca;font-family:'Source Serif 4',Georgia,serif;max-width:560px;margin:0 auto;}
+.sumhead{background:#1c1c22;padding:14px 20px;}
+.sumtop{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.sumtit{font-family:var(--serif);font-size:17px;color:white;}
+.sumbody{padding:18px 20px;}
+.sumrow{padding:10px 0;border-bottom:1px solid #e8e4dc;}
+.sumrow:last-child{border-bottom:none;}
+.sum-l{font-size:11px;font-weight:700;color:#5a5548;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.sum-v{font-size:14px;color:#1a1810;line-height:1.6;}
+.sum-flag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-family:var(--mono);padding:2px 7px;border-radius:3px;margin-right:5px;margin-bottom:3px;}
+.sf-warn{background:#fef9c3;color:#854d0e;border:1px solid #fde68a;}
+.sf-risk{background:#fce8e8;color:#9b1c1c;border:1px solid #fca5a5;}
+.sf-ok{background:#dcfce7;color:#166534;border:1px solid #86efac;}
+.sf-date{background:#e0f2fe;color:#0c4a6e;border:1px solid #7dd3fc;}
+
+/* CALENDAR */
+.calwrap{background:white;border-radius:4px;overflow:hidden;border:1px solid #d4d0ca;font-family:-apple-system,system-ui,sans-serif;max-width:560px;margin:0 auto;}
+.calhead{background:#1c1c22;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;}
+.calmon{font-family:var(--serif);font-size:16px;color:white;}
+.caldates{display:grid;grid-template-columns:repeat(7,1fr);gap:0;}
+.calday{text-align:center;padding:6px 4px;font-size:11px;color:#888;border-bottom:1px solid #f0ece4;border-right:1px solid #f0ece4;}
+.calday.header{background:#f8f5ef;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#5a5548;}
+.calday.today{background:#fef9c3;}
+.calday.has-event{background:#fce8e8;color:#9b1c1c;font-weight:600;}
+.calday.has-event2{background:#e0f2fe;color:#0c4a6e;font-weight:600;}
+.calday.has-event3{background:#dcfce7;color:#166534;font-weight:600;}
+.cal-event-list{padding:12px 18px;border-top:1px solid #e8e4dc;}
+.cal-evt{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f0ece4;font-size:13px;}
+.cal-evt:last-child{border-bottom:none;}
+.cal-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+
+/* COMPARE */
+.cmp{display:grid;grid-template-columns:1fr 28px 1fr;gap:0;margin-bottom:16px;}
+.cbef{background:var(--rlo);border:1px solid rgba(194,90,90,.25);border-radius:4px 0 0 4px;padding:18px 20px;}
+.cmid{background:var(--void2);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:center;color:var(--tx3);font-family:var(--serif);font-style:italic;}
+.caft{background:var(--slo);border:1px solid rgba(74,158,122,.25);border-radius:0 4px 4px 0;padding:18px 20px;}
+.cmlab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:500;margin-bottom:14px;}
+.cbef .cmlab{color:var(--rose);}
+.caft .cmlab{color:var(--sage);}
+.cmrow{font-size:13px;line-height:1.8;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-weight:300;}
+.cmrow:last-child{border-bottom:none;}
+.cbef .cmrow{color:#d48080;}
+.caft .cmrow{color:#80c8a0;}
+
+.mets{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.met{background:var(--slab);border:1px solid var(--bd);border-radius:4px;padding:18px;text-align:center;}
+.metn{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--gold);margin-bottom:4px;}
+.metl{font-family:var(--mono);font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;}
+
+.price{background:linear-gradient(135deg,var(--slab) 0%,var(--slab3) 100%);border:1px solid var(--bd2);border-radius:4px;padding:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:16px;}
+.pri{text-align:center;}
+.prl{font-family:var(--mono);font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;}
+.prv{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--gold);}
+.prs{font-size:12px;color:var(--tx3);margin-top:4px;font-weight:300;}
+.prd{width:1px;height:50px;background:var(--bd);}
+
+/* BUTTONS */
+.btn{padding:10px 24px;border-radius:3px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;cursor:pointer;border:none;transition:all .2s;text-transform:uppercase;}
+.bg{background:var(--gold);color:var(--void);}
+.bg:hover{background:var(--gold2);transform:translateY(-1px);box-shadow:0 6px 24px rgba(201,168,76,.3);}
+.bgh{background:transparent;color:var(--tx2);border:1px solid var(--bd2);}
+.bgh:hover{border-color:var(--gold);color:var(--gold);}
+.bsage{background:var(--sage);color:var(--void);}
+.bsage:hover{background:#3d8a68;}
+.bfw{width:100%;padding:13px;font-size:13px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:10px;font-weight:500;padding:3px 8px;border-radius:3px;letter-spacing:.04em;}
+.b-gold{background:var(--glo);color:var(--gold);border:1px solid rgba(201,168,76,.3);}
+.b-sage{background:var(--slo);color:var(--sage);border:1px solid rgba(74,158,122,.3);}
+.b-rose{background:var(--rlo);color:var(--rose);border:1px solid rgba(194,90,90,.3);}
+.b-sky{background:var(--blo);color:var(--sky);border:1px solid rgba(90,142,194,.3);}
+
+.pbar-t{height:3px;background:var(--slab2);border-radius:2px;overflow:hidden;margin:8px 0 5px;}
+.pbar-f{height:100%;border-radius:2px;background:var(--gold);transition:width 1.4s ease;}
+.pbar-m{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--tx3);margin-bottom:8px;}
+
+.snav{display:flex;align-items:center;justify-content:space-between;margin-top:28px;padding-top:22px;border-top:1px solid var(--bd);}
+.si{font-family:var(--mono);font-size:10px;color:var(--tx3);letter-spacing:.06em;}
+
+.help{font-size:13px;color:var(--tx3);padding:10px 14px;background:var(--void2);border-radius:4px;border-left:2px solid var(--bd2);margin-top:10px;font-family:var(--mono);font-style:normal;}
+
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--slab2);border:1px solid var(--bd2);border-radius:4px;padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tx);max-width:340px;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);box-shadow:0 12px 40px rgba(0,0,0,.7);font-family:var(--body);}
+.toast.show{transform:translateY(0);opacity:1;}
+
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 9px;border-radius:3px;font-family:var(--mono);}
+.chip-doc{background:#1a1a10;color:#a09848;border:1px solid #3a3820;}
+.chip-risk{background:var(--rlo);color:var(--rose);border:1px solid rgba(194,90,90,.3);}
+.chip-date{background:var(--blo);color:var(--sky);border:1px solid rgba(90,142,194,.3);}
+.chip-ok{background:var(--slo);color:var(--sage);border:1px solid rgba(74,158,122,.3);}
+
+@media(max-width:620px){
+  .statrow{flex-wrap:wrap;}
+  .stat{flex:0 0 50%;border-bottom:1px solid var(--bd);}
+  .stat:nth-child(2){border-right:none;}
+  .stat:nth-child(3){border-bottom:none;}
+  .stat:nth-child(4){border-bottom:none;border-right:none;}
+  .cmp{grid-template-columns:1fr;gap:8px;}
+  .cbef{border-radius:4px;}.cmid{display:none;}.caft{border-radius:4px;}
+  .mets{grid-template-columns:1fr 1fr;}
+  .price{flex-direction:column;align-items:flex-start;gap:10px;}
+  .prd{display:none;}
+}
+</style>
+</head>
+<body>
+
+  <!-- DEMO NAV BAR -->
+<div style="position:fixed; top:0; left:0; right:0; z-index:9999; background:rgba(13,15,20,0.95); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,0.07); padding:0.75rem 5%; display:flex; align-items:center; justify-content:space-between; font-family:'DM Sans',sans-serif;">
+  <a href="../demos.html" style="color:#00cfff; font-size:0.85rem; font-weight:600; text-decoration:none;">← Back to Demos</a>
+  <a href="../index.html#contact" style="background:#00cfff; color:#000; padding:0.4rem 1rem; border-radius:100px; font-size:0.8rem; font-weight:700; text-decoration:none;">Book a Call</a>
+</div>
+<div style="height:52px;"></div>
+
+<div class="app">
+
+<div class="hdr">
+  <div class="brand">
+    <div class="seal">LP</div>
+    <div class="bname"><em>LogicPrompt</em> AI</div>
+  </div>
+  <div class="livepill"><div class="dot"></div>LIVE DEMO</div>
+</div>
+
+<div class="hero">
+  <div class="htag">Document intelligence · Wellington, New Zealand</div>
+  <h1 class="h1">From 38-page document<br>to <em>plain-language brief</em><br>in <strong>under 60 seconds.</strong></h1>
+  <p class="hsub">An interactive walkthrough of how Ng & Partners automated document review, risk flagging, and matter logging — so their lawyers spend time on advice, not reading.</p>
+  <div class="statrow">
+    <div class="stat"><div class="sn">$350–400</div><div class="sl">NZ lawyer avg. hourly rate (LawyerFinder NZ)</div></div>
+    <div class="stat"><div class="sn">52 min</div><div class="sl">Saved per document review</div></div>
+    <div class="stat"><div class="sn">$300+</div><div class="sl">Value of time saved per review</div></div>
+    <div class="stat"><div class="sn">0</div><div class="sl">Missed risk clauses after this build</div></div>
+  </div>
+</div>
+
+<div class="rail" role="tablist">
+  <button class="rb active" onclick="goS(0)" id="t0" role="tab"><span class="rn">01</span><span class="ri">😓</span><span>The Pain</span></button>
+  <button class="rb" onclick="goS(1)" id="t1" role="tab"><span class="rn">02</span><span class="ri">📄</span><span>Document</span></button>
+  <button class="rb" onclick="goS(2)" id="t2" role="tab"><span class="rn">03</span><span class="ri">🤖</span><span>AI Review</span></button>
+  <button class="rb" onclick="goS(3)" id="t3" role="tab"><span class="rn">04</span><span class="ri">📋</span><span>Summary</span></button>
+  <button class="rb" onclick="goS(4)" id="t4" role="tab"><span class="rn">05</span><span class="ri">📅</span><span>Calendar</span></button>
+  <button class="rb" onclick="goS(5)" id="t5" role="tab"><span class="rn">06</span><span class="ri">⚖️</span><span>Outcome</span></button>
+</div>
+
+<!-- ═══════════════════ STAGE 0: PAIN ═══════════════════ -->
+<div id="s0" class="stage on">
+  <div class="shead">
+    <div class="stag">Before LogicPrompt AI</div>
+    <div class="stitle">Ng & Partners Law — <em>Wellington</em></div>
+    <div class="sdesc">Sarah runs a boutique commercial practice in Wellington. The legal work is excellent. The intake and review process is quietly costing the firm thousands every week. Click each frustration to see the real number.</div>
+  </div>
+  <div class="pcards">
+    <div class="pcard" onclick="tp(0)" id="pc0">
+      <div class="pico">⏱</div>
+      <div><div class="ptit">45–60 minutes per document review</div>
+        <div class="pbod">Before every client call, Sarah or a senior associate reads the full contract — 30, 40, sometimes 80 pages — to identify the issues worth discussing. At $375/hr, that's $281–$375 of billable time spent on reading rather than advising.</div>
+        <div class="pcost" id="p0c"></div></div>
+    </div>
+    <div class="pcard" onclick="tp(1)" id="pc1">
+      <div class="pico">⚠️</div>
+      <div><div class="ptit">Risk clauses missed under time pressure</div>
+        <div class="pbod">When a client needs turnaround in 24 hours, the review gets rushed. Personal guarantee clauses, early exit penalties, and rent review triggers — buried on page 31 — don't always surface in time. One missed clause can mean six-figure liability exposure.</div>
+        <div class="pcost" id="p1c"></div></div>
+    </div>
+    <div class="pcard" onclick="tp(2)" id="pc2">
+      <div class="pico">🗂</div>
+      <div><div class="ptit">New matters logged inconsistently</div>
+        <div class="pbod">Each lawyer has their own intake process. Some log the matter immediately, some wait until after the first call. Client information sits in emails, sticky notes, and three different systems. Searching for context before a client call takes 15 minutes that shouldn't be necessary.</div>
+        <div class="pcost" id="p2c"></div></div>
+    </div>
+    <div class="pcard" onclick="tp(3)" id="pc3">
+      <div class="pico">📅</div>
+      <div><div class="ptit">Deadlines buried in documents — missed until urgent</div>
+        <div class="pbod">Rent commencement dates, notice periods for lease options, consent deadlines — all buried in the document body. They surface when a client calls in a panic, or when the deadline has already passed. The NZ Property Council updated standard lease templates in early 2025 — new deadline structures that aren't always obvious at a glance.</div>
+        <div class="pcost" id="p3c"></div></div>
+    </div>
+  </div>
+  <div class="ctab" style="margin-top:16px;">
+    <div class="stag" style="margin-bottom:12px;">Real cost of manual document review — Ng & Partners</div>
+    <div class="crow"><span class="cl">Senior associate time per review (52 min avg.)</span><span class="cv r">$325 in billable time</span></div>
+    <div class="crow"><span class="cl">Reviews per week (commercial practice, 3 lawyers)</span><span class="cv r">~8–12 reviews/week</span></div>
+    <div class="crow"><span class="cl">Weekly cost in review-reading time</span><span class="cv r">$2,600–$3,900/week</span></div>
+    <div class="crow"><span class="cl">Annual cost (50 billing weeks)</span><span class="cv r">$130,000–$195,000/yr</span></div>
+    <div class="crow"><span class="cl">Liability exposure from one missed risk clause (est.)</span><span class="cv r">$50,000–$500,000</span></div>
+    <div class="crow" style="padding-top:10px;"><span class="cl" style="font-weight:400;color:var(--tx);">Value of time this system frees per year</span><span class="cv g" style="font-size:16px;">$130k–$195k of lawyer time</span></div>
+  </div>
+  <div class="snav"><div></div><div class="si">CHAPTER 1 OF 6</div><button class="btn bg" onclick="goS(1)">Upload a document →</button></div>
+</div>
+
+<!-- ═══════════════════ STAGE 1: DOCUMENT ═══════════════════ -->
+<div id="s1" class="stage">
+  <div class="shead">
+    <div class="stag">Monday 9:14 AM — new inquiry received</div>
+    <div class="stitle">A client submits a document.<br><em>38 pages. Needs review by Friday.</em></div>
+    <div class="sdesc">A commercial tenant sends through a lease agreement for a new Wellington CBD premises. They need Sarah's advice before signing. Select the document type below — each one shows a different risk profile and outcome.</div>
+  </div>
+
+  <div class="panel">
+    <div class="pbar"><div class="ptitle">Document <em>intake</em></div><span class="badge b-gold" id="doc-badge">SELECT DOCUMENT</span></div>
+    <div class="pbody">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--tx3);margin-bottom:14px;text-transform:uppercase;letter-spacing:.08em;">Choose a document type to simulate:</div>
+      <div style="display:flex;flex-direction:column;gap:8px;" id="doclist">
+        <div class="pcard" onclick="selectDoc('lease')" id="d-lease" style="border-color:var(--bd);">
+          <div style="font-size:20px;flex-shrink:0;">🏢</div>
+          <div><div class="ptit" style="font-size:14px;">Commercial lease agreement — 38 pages</div>
+            <div class="pbod">Wellington CBD retail premises. 5-year term with rights of renewal. PCNZ 2025 updated standard form. Two risk clauses flagged in initial scan.</div>
+            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="chip chip-doc">PDF · 38pp</span>
+              <span class="chip chip-risk">2 risk clauses</span>
+              <span class="chip chip-date">4 deadlines</span>
+            </div>
+          </div>
+        </div>
+        <div class="pcard" onclick="selectDoc('supply')" id="d-supply" style="border-color:var(--bd);">
+          <div style="font-size:20px;flex-shrink:0;">📦</div>
+          <div><div class="ptit" style="font-size:14px;">Supply agreement — 22 pages</div>
+            <div class="pbod">Exclusive distribution agreement for NZ market. Indemnity clause flagged. Termination provisions require review.</div>
+            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="chip chip-doc">PDF · 22pp</span>
+              <span class="chip chip-risk">3 risk clauses</span>
+              <span class="chip chip-date">2 deadlines</span>
+            </div>
+          </div>
+        </div>
+        <div class="pcard" onclick="selectDoc('employment')" id="d-employment" style="border-color:var(--bd);">
+          <div style="font-size:20px;flex-shrink:0;">👤</div>
+          <div><div class="ptit" style="font-size:14px;">Senior employment agreement — 14 pages</div>
+            <div class="pbod">CEO employment contract. Restraint of trade clause flagged. KPI-linked remuneration provisions need plain-language explanation.</div>
+            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="chip chip-doc">PDF · 14pp</span>
+              <span class="chip chip-risk">2 risk clauses</span>
+              <span class="chip chip-date">3 deadlines</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="doc-selected" style="display:none;margin-top:16px;">
+        <div class="docview" id="docview"></div>
+        <button class="btn bg" onclick="goS(2)" style="margin-top:12px;">Send to AI for review →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="help">← Select a document type above to load a preview of its contents. Each document triggers a different AI analysis with real NZ legal risk profiles.</div>
+  <div class="snav"><button class="btn bgh" onclick="goS(0)">← Back</button><div class="si">CHAPTER 2 OF 6</div><button class="btn bg" onclick="goS(2)">Skip to AI review →</button></div>
+</div>
+
+<!-- ═══════════════════ STAGE 2: AI REVIEW ═══════════════════ -->
+<div id="s2" class="stage">
+  <div class="shead">
+    <div class="stag">9:14 AM — AI analysis running</div>
+    <div class="stitle">The AI reads the document.<br><em>Every clause. Every obligation. Every deadline.</em></div>
+    <div class="sdesc">While Sarah is still on her morning calls, the system has already read the full document, extracted all obligations, flagged risk clauses, and identified every critical deadline. Click "Run analysis" to watch it work.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;" id="ai-grid">
+    <div>
+      <div class="panel">
+        <div class="pbar"><div class="ptitle">Document <em>scan</em></div><span class="badge b-sky" id="scan-badge">READY</span></div>
+        <div class="pbody" style="padding:14px 16px;">
+          <div class="pbar-m" id="prog-meta"><span>Awaiting analysis</span><span>0%</span></div>
+          <div class="pbar-t"><div class="pbar-f" id="prog-bar" style="width:0%"></div></div>
+          <div class="console">
+            <div class="cbar"><div class="cdot r"></div><div class="cdot y"></div><div class="cdot g"></div><span class="ctit">logicprompt · document-intelligence</span></div>
+            <div class="cbody" id="ai-log" style="min-height:160px;"><div style="color:var(--tx3);font-size:11px;">— awaiting document —</div></div>
+          </div>
+          <button class="btn bsage" id="run-btn" onclick="runAnalysis()" style="margin-top:12px;width:100%;">▶ Run AI analysis</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="panel" id="findings-panel" style="display:none;">
+        <div class="pbar"><div class="ptitle">Key <em>findings</em></div><span class="badge b-sage" id="findings-badge">COMPLETE</span></div>
+        <div class="pbody" style="padding:14px 16px;" id="findings-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="help">← Click "Run AI analysis" to watch the document intelligence engine work through the document in real time. Each document type produces different findings.</div>
+  <div class="snav"><button class="btn bgh" onclick="goS(1)">← Back</button><div class="si">CHAPTER 3 OF 6</div><button class="btn bg" onclick="goS(3)">See the summary →</button></div>
+</div>
+
+<!-- ═══════════════════ STAGE 3: SUMMARY ═══════════════════ -->
+<div id="s3" class="stage">
+  <div class="shead">
+    <div class="stag">9:15 AM — Sarah's inbox</div>
+    <div class="stitle">Plain-language summary.<br><em>Ready before Sarah finishes her coffee.</em></div>
+    <div class="sdesc">The AI doesn't send a document. It sends an understanding. A structured briefing note in plain language — risks highlighted, obligations numbered, deadlines flagged. Sarah reads this in 3 minutes and is ready to advise.</div>
+  </div>
+
+  <div class="panel" style="max-width:580px;margin:0 auto 16px;">
+    <div class="pbar"><div class="ptitle">Sarah's <em>inbox — 9:15 AM</em></div><span class="badge b-sage">DELIVERED</span></div>
+    <div class="pbody" style="padding:0;">
+      <div class="sumcard">
+        <div class="sumhead">
+          <div class="sumtop">LogicPrompt AI · Matter Summary</div>
+          <div class="sumtit" id="sum-title">Commercial lease — Wellington CBD</div>
+        </div>
+        <div class="sumbody" id="sum-body">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctab">
+    <div class="stag" style="margin-bottom:10px;">What changed — before vs after</div>
+    <div class="crow"><span class="cl">Time to understand the document</span><span class="cv g">3 min to read summary vs 52 min manual review</span></div>
+    <div class="crow"><span class="cl">Risk clauses surfaced</span><span class="cv s">100% — none buried</span></div>
+    <div class="crow"><span class="cl">Matter logged</span><span class="cv s">Automatic — on document receipt</span></div>
+    <div class="crow"><span class="cl">Deadlines captured</span><span class="cv s">100% — added to calendar automatically</span></div>
+    <div class="crow"><span class="cl">Sarah's preparation time</span><span class="cv s">3 minutes vs 52 minutes</span></div>
+    <div class="crow" style="padding-top:10px;"><span class="cl" style="color:var(--tx);font-weight:400;">Lawyer time freed per review</span><span class="cv g" style="font-size:16px;">49 minutes · ~$306 NZD recovered</span></div>
+  </div>
+
+  <div class="snav"><button class="btn bgh" onclick="goS(2)">← Back</button><div class="si">CHAPTER 4 OF 6</div><button class="btn bg" onclick="goS(4)">See calendar update →</button></div>
+</div>
+
+<!-- ═══════════════════ STAGE 4: CALENDAR ═══════════════════ -->
+<div id="s4" class="stage">
+  <div class="shead">
+    <div class="stag">9:15 AM — Automatic — zero manual entry</div>
+    <div class="stitle">Deadlines added to calendar.<br><em>Matter logged. Nothing slips.</em></div>
+    <div class="sdesc">Every deadline extracted from the document is automatically added to the matter calendar. Rent commencement, notice periods, review dates, option windows. Sarah doesn't need to find them — the system already did.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
+    <div>
+      <div class="panel">
+        <div class="pbar"><div class="ptitle">Matter <em>record</em></div><span class="badge b-sage">AUTO-CREATED</span></div>
+        <div class="pbody" style="padding:14px 16px;">
+          <div class="ctab" style="padding:12px 14px;margin-bottom:0;">
+            <div class="crow"><span class="cl">Matter ID</span><span class="cv" id="matter-id">NGP-2026-0441</span></div>
+            <div class="crow"><span class="cl">Document type</span><span class="cv" id="matter-type">Commercial lease</span></div>
+            <div class="crow"><span class="cl">Client</span><span class="cv">Wellington Retail Co. Ltd</span></div>
+            <div class="crow"><span class="cl">Assigned to</span><span class="cv">Sarah Ng</span></div>
+            <div class="crow"><span class="cl">Risk level</span><span id="matter-risk"><span class="badge b-gold">MEDIUM — 2 flagged</span></span></div>
+            <div class="crow"><span class="cl">Deadlines logged</span><span class="cv s" id="matter-dl">4 — added to calendar</span></div>
+            <div class="crow"><span class="cl">Summary sent</span><span class="cv s">9:15 AM — today</span></div>
+            <div class="crow"><span class="cl">Manual entry required</span><span class="cv s">Zero</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="calwrap" id="cal-wrap">
+        <div class="calhead">
+          <div class="calmon">May 2026</div>
+          <span style="font-family:var(--mono);font-size:10px;color:#a0a090;letter-spacing:.06em;">NGP-2026-0441</span>
+        </div>
+        <div class="caldates" id="caldates"></div>
+        <div class="cal-event-list" id="cal-events"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="snav"><button class="btn bgh" onclick="goS(3)">← Back</button><div class="si">CHAPTER 5 OF 6</div><button class="btn bg" onclick="goS(5)">See the outcome →</button></div>
+</div>
+
+<!-- ═══════════════════ STAGE 5: OUTCOME ═══════════════════ -->
+<div id="s5" class="stage">
+  <div class="shead">
+    <div class="stag">The outcome — Ng & Partners Law, Wellington</div>
+    <div class="stitle">What changes for Sarah's practice.</div>
+    <div class="sdesc">Sarah's team gets a plain-language summary before every client call — risks flagged, deadlines logged, nothing buried. They spend time on advice, not reading.</div>
+  </div>
+
+  <div class="cmp">
+    <div class="cbef">
+      <div class="cmlab">Before</div>
+      <div class="cmrow">⏱ 45–60 min per document review</div>
+      <div class="cmrow">⚠️ Risk clauses missed under pressure</div>
+      <div class="cmrow">🗂 Inconsistent matter logging</div>
+      <div class="cmrow">📅 Deadlines found when urgent</div>
+      <div class="cmrow">📞 Client calls without full context</div>
+      <div class="cmrow">💸 $130k–$195k/yr in review time</div>
+    </div>
+    <div class="cmid">→</div>
+    <div class="caft">
+      <div class="cmlab">After LogicPrompt AI</div>
+      <div class="cmrow">⚡ 3-min summary before every call</div>
+      <div class="cmrow">✅ 100% risk clause capture</div>
+      <div class="cmrow">🗂 Auto-logged on document receipt</div>
+      <div class="cmrow">📅 All deadlines in calendar instantly</div>
+      <div class="cmrow">📞 Every call starts fully briefed</div>
+      <div class="cmrow">💰 49 min freed per review · ~$306 recovered</div>
+    </div>
+  </div>
+
+  <div class="mets">
+    <div class="met"><div class="metn">52 min</div><div class="metl">Saved per review</div></div>
+    <div class="met"><div class="metn">100%</div><div class="metl">Deadlines captured</div></div>
+    <div class="met"><div class="metn">0</div><div class="metl">Missed obligations</div></div>
+  </div>
+
+  <div class="ctab" style="margin-bottom:16px;">
+    <div class="stag" style="margin-bottom:12px;">ROI — Ng & Partners, 3 lawyers, 10 reviews/week</div>
+    <div class="crow"><span class="cl">Time freed per review (52 min avg.)</span><span class="cv s">52 min · $325 NZD recovered per review</span></div>
+    <div class="crow"><span class="cl">Reviews per week across the practice</span><span class="cv s">~10 reviews/week</span></div>
+    <div class="crow"><span class="cl">Weekly lawyer time recovered</span><span class="cv s">~$3,250 NZD/week available for billable work</span></div>
+    <div class="crow"><span class="cl">Annual lawyer time recovered (50 weeks)</span><span class="cv g">$162,500 NZD/year</span></div>
+    <div class="crow"><span class="cl">Risk: one missed personal guarantee clause (est.)</span><span class="cv r">$50k–$500k liability</span></div>
+    <div class="crow" style="padding-top:10px;"><span class="cl" style="color:var(--tx);">System running cost (all tools)</span><span class="cv s">&lt; $90 NZD/month</span></div>
+  </div>
+
+  <div class="price">
+    <div class="pri"><div class="prl">One-time build</div><div class="prv">$1,500–2,500</div><div class="prs">NZD · Delivered 7–10 days</div></div>
+    <div class="prd"></div>
+    <div class="pri"><div class="prl">Monthly retainer</div><div class="prv">$250–400</div><div class="prs">NZD/month · Optional</div></div>
+    <div class="prd"></div>
+    <div class="pri"><div class="prl">Payback period</div><div class="prv">&lt; 1 week</div><div class="prs">First week of operation</div></div>
+  </div>
+
+  <button class="btn bg bfw" onclick="toast('📅','Booking flow opened — LogicPrompt AI scoping call')">Build this for my practice ↗</button>
+  <div class="snav"><button class="btn bgh" onclick="goS(4)">← Back</button><div class="si">CHAPTER 6 OF 6</div><button class="btn bgh" onclick="resetAll()">↺ Run demo again</button></div>
+</div>
+
+</div>
+<div class="toast" id="toast"><span id="tico">✓</span>&nbsp;<span id="tmsg">Done</span></div>
+
+<script>
+const visited=new Set([0]);let cur=0;
+let selDoc='lease';let analysisRun=false;
+
+const docs={
+  lease:{
+    title:'Commercial lease — Wellington CBD',
+    pages:38,chips:['PDF · 38pp','2 risk clauses','4 deadlines'],
+    html:`<div class="docbody">
+<h3>DEED OF LEASE — WELLINGTON CENTRAL RETAIL PREMISES</h3>
+<p><strong>Parties:</strong> Wellington CBD Holdings Ltd (Landlord) and Wellington Retail Co. Ltd (Tenant)</p>
+<p><strong>Premises:</strong> 287 Lambton Quay, Wellington. Ground floor retail premises, 180m².</p>
+<h3>CLAUSE 3 — TERM AND RENT</h3>
+<p>The term of this lease shall be <span class="clause-highlight">five (5) years</span> commencing <span class="clause-deadline">1 July 2026</span>, with one right of renewal of five (5) years. Base rent: <strong>$148,000 NZD per annum + GST</strong>, payable monthly in advance.</p>
+<h3>CLAUSE 7 — RENT REVIEW</h3>
+<p>Rent shall be reviewed on <span class="clause-deadline">1 July 2028</span> and at each renewal. Reviews shall be to market rent. Notice of exercise of right of renewal must be given no later than <span class="clause-deadline">3 months prior to expiry</span>.</p>
+<h3>CLAUSE 14 — EARLY EXIT PENALTY</h3>
+<p><span class="clause-risk">In the event the Tenant surrenders or abandons the premises prior to the expiry of the initial term, the Tenant shall pay to the Landlord a sum equal to 12 months' base rent as a liquidated damages penalty, together with all outstanding outgoings and make-good costs.</span></p>
+<h3>CLAUSE 19 — PERSONAL GUARANTEE</h3>
+<p><span class="clause-risk">The directors of the Tenant company shall provide a personal guarantee in favour of the Landlord for all obligations under this lease. Such guarantee shall be unlimited in amount and shall survive the termination of this lease for a period of two (2) years.</span></p>
+<h3>CLAUSE 22 — MAKE-GOOD</h3>
+<p>On expiry, the Tenant shall reinstate the premises to base building condition. Make-good works must be completed within <span class="clause-deadline">30 days of lease expiry</span>.</p>
+</div>`,
+    logLines:[
+      ['info','Document received — Commercial lease, Wellington CBD, 38 pages'],
+      ['info','Parsing document structure — identifying clauses and headings...'],
+      ['ok',  'Parties identified — Landlord: Wellington CBD Holdings Ltd · Tenant: Wellington Retail Co. Ltd'],
+      ['ok',  'Lease term extracted: 5 years from 1 Jul 2026, one right of renewal'],
+      ['ok',  'Base rent extracted: $148,000 NZD/year + GST'],
+      ['warn','Risk clause detected — Cl.14: Early exit penalty of 12 months base rent (~$148k)'],
+      ['warn','Risk clause detected — Cl.19: Unlimited personal guarantee, directors, 2-year survival'],
+      ['ok',  'Deadline 1: Commencement — 1 July 2026'],
+      ['ok',  'Deadline 2: Rent review — 1 July 2028'],
+      ['ok',  'Deadline 3: Renewal notice — 3 months before 30 June 2031'],
+      ['ok',  'Deadline 4: Make-good completion — 30 days post-expiry'],
+      ['info','Generating plain-language summary...'],
+      ['ok',  'Summary complete — 3 obligations · 2 risk clauses · 4 deadlines · 0 missed'],
+    ],
+    findings:[
+      {label:'Document type',val:'NZ PCNZ-form commercial lease (2025 edition)',color:''},
+      {label:'Parties',val:'Wellington CBD Holdings Ltd (L) / Wellington Retail Co. Ltd (T)',color:''},
+      {label:'Term & rent',val:'5 years from 1 Jul 2026 · $148,000 + GST/year',color:''},
+      {label:'🔴 Risk — Early exit',val:'12 months base rent penalty (~$148k) if lease surrendered early',color:'rose'},
+      {label:'🔴 Risk — Personal guarantee',val:'Unlimited director guarantee, survives 2 years post-lease',color:'rose'},
+      {label:'Deadlines found',val:'4 extracted and added to matter calendar',color:'sage'},
+    ],
+    sumTitle:'Commercial lease — Wellington CBD · 38pp',
+    sumRows:[
+      {l:'Document',v:'Commercial lease agreement, Wellington CBD, 38 pages'},
+      {l:'What this is',v:'Your client is considering signing as a retail tenant for 5 years at 287 Lambton Quay. Base rent is $148,000/year + GST. The landlord is using the PCNZ 2025 standard form.'},
+      {l:'Key obligations on your client',v:'(1) Pay rent monthly in advance. (2) Exercise right of renewal by 31 March 2031 or lose it. (3) Complete make-good within 30 days of lease expiry.'},
+      {l:'⚠ Risk 1 — Early exit penalty',v:'Clause 14: If your client exits before 5 years, they owe 12 months base rent (~$148,000) as liquidated damages. Advise client to negotiate a break clause or reduce penalty period before signing.',risk:'high'},
+      {l:'⚠ Risk 2 — Unlimited personal guarantee',v:'Clause 19: The directors must personally guarantee all lease obligations — unlimited in amount — for 2 years after the lease ends. This is significant personal liability. Recommend negotiating a cap (e.g. 6 months rent) or removal.',risk:'high'},
+      {l:'Deadlines',v:'1 Jul 2026 — rent commences | 1 Jul 2028 — rent review | 31 Mar 2031 — renewal notice due | 30 Jul 2031 — make-good due'},
+      {l:'Recommended next steps',v:'(1) Call client to discuss personal guarantee before any signing. (2) Request cap on early exit penalty. (3) Confirm directors understand guarantee scope.'},
+    ],
+    calEvents:[
+      {date:1,label:'Rent commences — 287 Lambton Quay',color:'#c25a5a',type:1},
+      {date:14,label:'Review renewal notice deadline (3 months)',color:'#5a8ec2',type:2},
+      {date:28,label:'Personal guarantee discussion — due',color:'#c9a84c',type:3},
+    ],
+    matRisk:'<span class="badge b-rose">HIGH — 2 risk clauses</span>',
+    matDl:'4 — added to calendar',
+    matId:'NGP-2026-0441',
+    matType:'Commercial lease (PCNZ 2025)',
+  },
+  supply:{
+    title:'Supply agreement — NZ distribution',
+    pages:22,
+    html:`<div class="docbody">
+<h3>EXCLUSIVE DISTRIBUTION AGREEMENT</h3>
+<p><strong>Parties:</strong> Pacific Goods Ltd (Supplier) and Wellington Retail Co. Ltd (Distributor)</p>
+<p>Exclusive distribution rights for New Zealand territory.</p>
+<h3>CLAUSE 8 — INDEMNITY</h3>
+<p><span class="clause-risk">The Distributor shall indemnify and hold harmless the Supplier from all claims, losses, and liabilities arising from the Distributor's activities in the Territory, including product liability claims, whether or not such claims arise from the negligence of the Supplier.</span></p>
+<h3>CLAUSE 11 — MINIMUM PURCHASE</h3>
+<p>Distributor must purchase minimum <span class="clause-highlight">$240,000 NZD per annum</span>. Failure triggers termination right for Supplier.</p>
+<h3>CLAUSE 15 — TERMINATION WITHOUT CAUSE</h3>
+<p><span class="clause-risk">Either party may terminate this agreement on 30 days written notice, without cause, at any time after the first year.</span></p>
+<h3>CLAUSE 18 — IP OWNERSHIP</h3>
+<p><span class="clause-risk">All customer data, sales data, and market intelligence gathered by the Distributor in the Territory shall be owned by the Supplier upon termination.</span></p>
+<h3>CLAUSE 21 — RENEWAL</h3>
+<p>Agreement renews annually unless notice given by <span class="clause-deadline">1 November each year</span>.</p>
+</div>`,
+    logLines:[
+      ['info','Document received — Supply/distribution agreement, 22 pages'],
+      ['info','Parsing clauses — commercial agreement structure detected'],
+      ['ok',  'Parties: Pacific Goods Ltd (Supplier) / Wellington Retail Co. Ltd (Distributor)'],
+      ['warn','Risk clause — Cl.8: Broad indemnity, covers Supplier negligence — significant exposure'],
+      ['ok',  'Minimum purchase obligation: $240,000 NZD/year'],
+      ['warn','Risk clause — Cl.15: 30-day no-cause termination after year 1 — highly unfavourable'],
+      ['warn','Risk clause — Cl.18: Supplier owns all customer data on termination — data loss risk'],
+      ['ok',  'Deadline: Renewal notice — 1 November annually'],
+      ['ok',  'Deadline: Minimum purchase review — end of each year'],
+      ['ok',  'Generating plain-language summary — 5 obligations · 3 risk clauses · 2 deadlines'],
+      ['ok',  'Summary complete'],
+    ],
+    findings:[
+      {label:'Document type',val:'Exclusive distribution agreement — NZ territory'},
+      {label:'Parties',val:'Pacific Goods Ltd (Supplier) / Wellington Retail Co. Ltd (Distributor)'},
+      {label:'🔴 Risk — Broad indemnity',val:'Covers Supplier\'s own negligence — advise client to negotiate carve-out'},
+      {label:'🔴 Risk — 30-day termination',val:'Supplier can exit with 30 days notice after year 1 — highly asymmetric'},
+      {label:'🔴 Risk — Customer data ownership',val:'Supplier claims all client data on termination — serious commercial risk'},
+      {label:'Deadlines',val:'2 extracted and added to calendar'},
+    ],
+    sumTitle:'Supply agreement — NZ distribution · 22pp',
+    sumRows:[
+      {l:'Document',v:'Exclusive distribution agreement, 22 pages, Pacific Goods Ltd'},
+      {l:'What this is',v:'Your client gets exclusive NZ rights to distribute Pacific Goods products. Minimum purchase commitment of $240,000/year applies. Three significant risk clauses require discussion before signing.'},
+      {l:'Key obligations',v:'(1) Purchase minimum $240k/year. (2) Give notice by 1 Nov to avoid auto-renewal. (3) Notify supplier of any product liability claims within 7 days.'},
+      {l:'⚠ Risk 1 — Broad indemnity',v:'Clause 8: Your client indemnifies the supplier even for the supplier\'s own negligence. This is unusual and highly unfavourable. Recommend striking or narrowing this clause.',risk:'high'},
+      {l:'⚠ Risk 2 — No-cause termination',v:'Clause 15: Either party can walk away on 30 days notice after year 1. Supplier could exit and take your client\'s market investment. Recommend minimum notice of 6–12 months.',risk:'high'},
+      {l:'⚠ Risk 3 — Customer data',v:'Clause 18: All data gathered by distributor goes to supplier on termination. This includes your client\'s customer list. Recommend deletion obligation and audit right.',risk:'high'},
+      {l:'Deadlines',v:'1 Nov each year — renewal notice | End of year — minimum purchase review'},
+    ],
+    calEvents:[
+      {date:3,label:'Indemnity review — advise client',color:'#c25a5a',type:1},
+      {date:10,label:'Minimum purchase confirmation',color:'#5a8ec2',type:2},
+      {date:22,label:'Termination clause — negotiation required',color:'#c9a84c',type:3},
+    ],
+    matRisk:'<span class="badge b-rose">HIGH — 3 risk clauses</span>',
+    matDl:'2 — added to calendar',
+    matId:'NGP-2026-0442',
+    matType:'Supply/distribution agreement',
+  },
+  employment:{
+    title:'CEO employment agreement — 14pp',
+    pages:14,
+    html:`<div class="docbody">
+<h3>SENIOR EMPLOYMENT AGREEMENT — CHIEF EXECUTIVE OFFICER</h3>
+<p><strong>Employer:</strong> Kiwi Innovations Ltd &nbsp;|&nbsp; <strong>Employee:</strong> James Crawford</p>
+<p><strong>Base salary:</strong> $320,000 NZD per annum. <strong>Start date:</strong> <span class="clause-deadline">2 June 2026</span></p>
+<h3>CLAUSE 6 — RESTRAINT OF TRADE</h3>
+<p><span class="clause-risk">For a period of 24 months following termination of employment, the Employee must not: (a) be employed by or provide services to any competitor operating in New Zealand; (b) solicit customers of the Employer with whom the Employee had material dealings in the 12 months prior to termination.</span></p>
+<h3>CLAUSE 9 — KPI REMUNERATION</h3>
+<p><span class="clause-highlight">Annual performance bonus of up to $80,000 NZD (25% of base), subject to Board assessment against KPIs set annually. KPIs to be agreed by <span class="clause-deadline">31 March each year</span>. Payment within 30 days of Board approval.</span></p>
+<h3>CLAUSE 12 — TERMINATION WITHOUT CAUSE</h3>
+<p>Employer may terminate on <span class="clause-highlight">6 months written notice</span>, or payment of 6 months base salary in lieu of notice. Employee may resign on <span class="clause-deadline">3 months written notice</span>.</p>
+<h3>CLAUSE 15 — GARDEN LEAVE</h3>
+<p>During any notice period, the Employer may place the Employee on garden leave, during which time the restraint of trade begins to run.</p>
+</div>`,
+    logLines:[
+      ['info','Document received — Senior employment agreement, CEO, 14 pages'],
+      ['info','Parsing — employment agreement structure (Employment Relations Act 2000 NZ)'],
+      ['ok',  'Parties: Kiwi Innovations Ltd / James Crawford (CEO)'],
+      ['ok',  'Base salary: $320,000 NZD/year · Start: 2 June 2026'],
+      ['warn','Risk clause — Cl.6: 24-month restraint of trade — broad scope, NZ enforceability uncertain'],
+      ['ok',  'KPI bonus: up to $80,000 NZD (25% of base), Board discretion'],
+      ['ok',  'Termination: 6 months notice (employer) / 3 months (employee)'],
+      ['ok',  'Deadline 1: Start date — 2 June 2026'],
+      ['ok',  'Deadline 2: KPI agreement deadline — 31 March each year'],
+      ['ok',  'Deadline 3: First KPI review — 31 March 2027'],
+      ['ok',  'Generating plain-language summary — 3 obligations · 2 risk clauses · 3 deadlines'],
+      ['ok',  'Summary complete'],
+    ],
+    findings:[
+      {label:'Document type',val:'Senior employment agreement — CEO, NZ ERA 2000 compliant'},
+      {label:'Parties',val:'Kiwi Innovations Ltd (employer) / James Crawford (CEO)'},
+      {label:'Package',val:'$320,000 base + up to $80,000 performance bonus'},
+      {label:'🟡 Risk — Restraint of trade',val:'24 months, broad NZ scope — NZ courts often reduce duration, advise client on enforceability'},
+      {label:'🟡 Risk — Board-discretion bonus',val:'KPI-linked $80k bonus has no floor — Board can set unachievable KPIs. Recommend guaranteed floor.'},
+      {label:'Deadlines',val:'3 extracted — start date, KPI deadlines'},
+    ],
+    sumTitle:'CEO employment agreement · 14pp',
+    sumRows:[
+      {l:'Document',v:'Senior employment agreement, 14 pages — James Crawford as CEO of Kiwi Innovations Ltd'},
+      {l:'What this is',v:'Your client is accepting a CEO role at $320,000 base + up to $80k bonus. Two clauses require discussion before signing.'},
+      {l:'Key obligations',v:'(1) Agree KPIs with Board by 31 March each year. (2) Provide 3 months notice on resignation. (3) Comply with restraint of trade for 24 months post-employment.'},
+      {l:'⚠ Risk 1 — Restraint of trade',v:'Clause 6: 24-month restraint covering all NZ competitors is very broad. NZ courts frequently reduce scope or duration. Advise client on practical enforceability and negotiate narrower geographic/role scope.',risk:'medium'},
+      {l:'⚠ Risk 2 — Discretionary bonus',v:'Clause 9: $80k bonus is subject entirely to Board assessment — no minimum, no floor guarantee. If KPIs are set unilaterally by the Board each March, your client may never receive the bonus. Recommend a guaranteed minimum or independent KPI process.',risk:'medium'},
+      {l:'Deadlines',v:'2 Jun 2026 — start date | 31 Mar 2027 — first KPI agreement | 31 Mar annually — KPI review'},
+    ],
+    calEvents:[
+      {date:5,label:'CEO start date — 2 June 2026',color:'#c25a5a',type:1},
+      {date:15,label:'KPI agreement due — 31 March',color:'#5a8ec2',type:2},
+      {date:25,label:'Restraint of trade — advise client',color:'#c9a84c',type:3},
+    ],
+    matRisk:'<span class="badge b-gold">MEDIUM — 2 risk clauses</span>',
+    matDl:'3 — added to calendar',
+    matId:'NGP-2026-0443',
+    matType:'Senior employment agreement',
+  }
+};
+
+const painCosts=[
+  'Cost: ~$325 of billable time per document review at $375/hr avg.',
+  'Exposure: one missed personal guarantee clause can mean $50k–$500k liability',
+  'Cost: est. 15 min/matter in admin overhead — $94 wasted per matter at $375/hr',
+  'Risk: missed deadline = potential negligence claim, lost client rights',
+];
+
+function tp(i){
+  document.querySelectorAll('.pcard').forEach((c,j)=>c.classList.toggle('hot',j===i));
+  document.getElementById('p'+i+'c').textContent=painCosts[i];
+}
+
+function goS(n){
+  document.getElementById('s'+cur).classList.remove('on');
+  document.getElementById('t'+cur).classList.remove('active');
+  visited.add(n);cur=n;
+  document.getElementById('s'+n).classList.add('on');
+  document.querySelectorAll('.rb').forEach((b,i)=>{
+    b.classList.toggle('active',i===n);
+    if(i!==n&&visited.has(i))b.classList.add('done');
+  });
+  if(n===3)buildSummary();
+  if(n===4)buildCalendar();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function selectDoc(key){
+  selDoc=key;
+  document.querySelectorAll('#doclist .pcard').forEach(c=>c.classList.remove('hot'));
+  document.getElementById('d-'+key).classList.add('hot');
+  const d=docs[key];
+  document.getElementById('doc-badge').textContent=d.pages+'PP · SELECTED';
+  document.getElementById('docview').innerHTML=`<div class="docbar"><span class="doctitle">📄 ${d.title}</span><div style="display:flex;gap:6px">${d.chips?d.chips.map(c=>`<span class="chip chip-doc">${c}</span>`).join(''):''}</div></div>${d.html}`;
+  document.getElementById('doc-selected').style.display='block';
+  analysisRun=false;
+  document.getElementById('ai-log').innerHTML='<div style="color:var(--tx3);font-size:11px;">— awaiting document —</div>';
+  document.getElementById('prog-bar').style.width='0%';
+  document.getElementById('prog-meta').innerHTML='<span>Awaiting analysis</span><span>0%</span>';
+  document.getElementById('findings-panel').style.display='none';
+  document.getElementById('run-btn').disabled=false;
+  document.getElementById('run-btn').textContent='▶ Run AI analysis';
+  document.getElementById('scan-badge').textContent='READY';
+  document.getElementById('scan-badge').className='badge b-sky';
+  toast('📄',`${d.title} selected — ${d.pages} pages`);
+}
+
+async function runAnalysis(){
+  if(analysisRun)return;
+  analysisRun=true;
+  const btn=document.getElementById('run-btn');
+  btn.disabled=true;btn.textContent='Analysing...';
+  document.getElementById('scan-badge').textContent='RUNNING';
+  document.getElementById('scan-badge').className='badge b-gold';
+  const log=document.getElementById('ai-log');log.innerHTML='';
+  const d=docs[selDoc];
+  const total=d.logLines.length;
+  for(let i=0;i<total;i++){
+    const[tag,msg]=d.logLines[i];
+    const pct=Math.round(((i+1)/total)*100);
+    await sleep(380);
+    addLog(log,tag,msg);
+    document.getElementById('prog-bar').style.width=pct+'%';
+    document.getElementById('prog-meta').innerHTML=`<span>${msg.slice(0,40)}${msg.length>40?'...':''}</span><span>${pct}%</span>`;
+  }
+  document.getElementById('scan-badge').textContent='COMPLETE';
+  document.getElementById('scan-badge').className='badge b-sage';
+  btn.textContent='✓ Analysis complete';
+  buildFindings();
+  toast('✓',`Document analysed — ${d.logLines.filter(l=>l[0]==='warn').length} risk clauses found`);
+}
+
+function buildFindings(){
+  const d=docs[selDoc];
+  const panel=document.getElementById('findings-panel');
+  panel.style.display='block';
+  let html='';
+  d.findings.forEach(f=>{
+    const vc=f.color==='rose'?'r':f.color==='sage'?'s':f.color==='gold'?'g':'';
+    html+=`<div class="crow"><span class="cl" style="font-size:12px;">${f.label}</span><span class="cv ${vc}" style="font-size:12px;max-width:200px;text-align:right;font-family:var(--body);">${f.val}</span></div>`;
+  });
+  document.getElementById('findings-body').innerHTML=html;
+}
+
+function buildSummary(){
+  const d=docs[selDoc];
+  document.getElementById('sum-title').textContent=d.sumTitle;
+  let html='';
+  d.sumRows.forEach(r=>{
+    const riskBg=r.risk==='high'?'background:#fce8e8;border:1px solid #fca5a5;border-radius:4px;padding:8px 10px;':
+                 r.risk==='medium'?'background:#fef9c3;border:1px solid #fde68a;border-radius:4px;padding:8px 10px;':'';
+    html+=`<div class="sumrow"><div class="sum-l">${r.l}</div><div class="sum-v" style="${riskBg}">${r.v}</div></div>`;
+  });
+  document.getElementById('sum-body').innerHTML=html;
+}
+
+function buildCalendar(){
+  const d=docs[selDoc];
+  document.getElementById('matter-id').textContent=d.matId;
+  document.getElementById('matter-type').textContent=d.matType;
+  document.getElementById('matter-risk').innerHTML=d.matRisk;
+  document.getElementById('matter-dl').textContent=d.matDl;
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html=days.map(d=>`<div class="calday header">${d}</div>`).join('');
+  const eventDays=new Map(d.calEvents.map(e=>[e.date,e.type]));
+  for(let i=0;i<4;i++)html+=`<div class="calday" style="color:transparent">.</div>`;
+  for(let i=1;i<=31;i++){
+    const type=eventDays.get(i);
+    const cls=type===1?'has-event':type===2?'has-event2':type===3?'has-event3':i===19?'today':'';
+    html+=`<div class="calday ${cls}">${i}</div>`;
+  }
+  document.getElementById('caldates').innerHTML=html;
+  const evHtml=d.calEvents.map(e=>`<div class="cal-evt"><div class="cal-dot" style="background:${e.color}"></div><div style="font-size:13px;color:#2a2820;">${e.label}</div></div>`).join('');
+  document.getElementById('cal-events').innerHTML=evHtml;
+}
+
+function resetAll(){
+  selDoc='lease';analysisRun=false;
+  document.querySelectorAll('#doclist .pcard').forEach(c=>c.classList.remove('hot'));
+  document.getElementById('doc-selected').style.display='none';
+  document.getElementById('doc-badge').textContent='SELECT DOCUMENT';
+  document.getElementById('ai-log').innerHTML='<div style="color:var(--tx3);font-size:11px;">— awaiting document —</div>';
+  document.getElementById('prog-bar').style.width='0%';
+  document.getElementById('prog-meta').innerHTML='<span>Awaiting analysis</span><span>0%</span>';
+  document.getElementById('findings-panel').style.display='none';
+  document.getElementById('run-btn').disabled=false;
+  document.getElementById('run-btn').textContent='▶ Run AI analysis';
+  document.getElementById('scan-badge').textContent='READY';
+  document.getElementById('scan-badge').className='badge b-sky';
+  document.querySelectorAll('.pcard').forEach(c=>c.classList.remove('hot'));
+  document.querySelectorAll('[id^="p"][id$="c"]').forEach(c=>{if(c.classList.contains('pcost'))c.textContent='';});
+  visited.clear();visited.add(0);
+  document.querySelectorAll('.rb').forEach(b=>b.classList.remove('done'));
+  goS(0);toast('↺','Demo reset — ready to run again');
+}
+
+function addLog(c,tag,msg){
+  const t=new Date().toTimeString().slice(0,8);
+  const tags={ok:'[  OK ]',warn:'[WARN ]',err:'[ ERR ]',info:'[INFO ]'};
+  const d=document.createElement('div');d.className='tl';
+  d.innerHTML=`<span class="tt">${t}</span><span class="tk ${tag}">${tags[tag]}</span><span class="tm">${msg}</span>`;
+  c.appendChild(d);requestAnimationFrame(()=>d.classList.add('show'));c.scrollTop=c.scrollHeight;
+}
+function toast(ico,msg){
+  const t=document.getElementById('toast');
+  document.getElementById('tico').textContent=ico;document.getElementById('tmsg').textContent=msg;
+  t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3400);
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// init
+selectDoc('lease');
+</script>
+</body>
+</html>

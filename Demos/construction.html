@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LogicPrompt AI — Construction | Hemi Build Group</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#0d0f12;--ink2:#13161b;--ink3:#1a1e26;--plate:#1e2330;--plate2:#252b3a;
+  --amber:#f5a623;--amber2:#e8920d;--alo:rgba(245,166,35,.10);--amd:rgba(245,166,35,.22);
+  --lime:#7ec850;--llo:rgba(126,200,80,.12);--red:#e84545;--rlo:rgba(232,69,69,.12);
+  --blue:#3b82f6;--blo:rgba(59,130,246,.12);
+  --tx:#dde1ec;--tx2:#8a90a4;--tx3:#4a5068;
+  --bd:#2a3040;--bd2:#343c52;
+  --df:'Barlow Condensed',sans-serif;--sf:'Barlow',sans-serif;--mf:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--ink);color:var(--tx);font-family:var(--sf);font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 31px,rgba(255,255,255,.015) 31px,rgba(255,255,255,.015) 32px),
+  repeating-linear-gradient(90deg,transparent,transparent 31px,rgba(255,255,255,.008) 31px,rgba(255,255,255,.008) 32px);}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(245,166,35,.04) 0%,transparent 70%);}
+.app{position:relative;z-index:1;max-width:1020px;margin:0 auto;padding:0 20px 80px;}
+
+/* HDR */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 0 18px;border-bottom:1px solid var(--bd);margin-bottom:36px;}
+.brand{display:flex;align-items:center;gap:12px;}
+.lp{width:40px;height:40px;border-radius:6px;background:var(--amber);display:flex;align-items:center;justify-content:center;font-family:var(--df);font-size:16px;font-weight:800;color:var(--ink);}
+.bname{font-family:var(--df);font-size:18px;font-weight:700;letter-spacing:.04em;}
+.bname em{color:var(--amber);font-style:normal;}
+.slive{display:flex;align-items:center;gap:6px;font-family:var(--mf);font-size:11px;color:var(--lime);background:var(--llo);border:1px solid rgba(126,200,80,.25);padding:5px 12px;border-radius:4px;letter-spacing:.04em;}
+.bl{width:6px;height:6px;border-radius:50%;background:var(--lime);animation:bl 1.8s infinite;}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* HERO */
+.hero{margin-bottom:40px;}
+.htag{font-family:var(--mf);font-size:11px;color:var(--amber);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.htag::before{content:'';width:24px;height:1px;background:var(--amber);}
+.hh1{font-family:var(--df);font-size:clamp(32px,5.5vw,52px);font-weight:800;line-height:1.1;text-transform:uppercase;letter-spacing:.02em;margin-bottom:10px;}
+.hh1 em{color:var(--amber);font-style:normal;}
+.hsub{font-size:15px;color:var(--tx2);max-width:560px;line-height:1.7;margin-bottom:28px;}
+.kpis{display:flex;gap:0;border:1px solid var(--bd);border-radius:6px;overflow:hidden;max-width:660px;background:var(--plate);}
+.kpi{flex:1;padding:14px 16px;border-right:1px solid var(--bd);}
+.kpi:last-child{border-right:none;}
+.kn{font-family:var(--df);font-size:26px;font-weight:700;color:var(--amber);}
+.kl{font-family:var(--mf);font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+
+/* RAIL */
+.rail{display:flex;gap:0;margin-bottom:32px;border:1px solid var(--bd);border-radius:6px;overflow:hidden;background:var(--ink2);}
+.rb{flex:1;padding:11px 6px;background:transparent;border:none;border-right:1px solid var(--bd);color:var(--tx3);font-family:var(--df);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px;line-height:1.2;}
+.rb:last-child{border-right:none;}
+.rb .rn{font-family:var(--mf);font-size:10px;color:var(--tx3);}
+.rb .ri{font-size:17px;}
+.rb.active{background:var(--amber);color:var(--ink);}
+.rb.active .rn{color:var(--ink2);}
+.rb.done{color:var(--lime);}
+.rb.done .rn{color:var(--lime);}
+
+/* STAGES */
+.stage{display:none;animation:fi .25s ease;}
+.stage.on{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* PANELS */
+.panel{background:var(--plate);border:1px solid var(--bd);border-radius:6px;overflow:hidden;margin-bottom:14px;}
+.pbar{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;background:var(--ink2);border-bottom:1px solid var(--bd);}
+.ptitle{font-family:var(--df);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.ptitle em{color:var(--amber);font-style:normal;}
+.pbody{padding:20px;}
+
+/* STAGE HEAD */
+.shead{margin-bottom:22px;}
+.stag{font-family:var(--mf);font-size:11px;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+.stitle{font-family:var(--df);font-size:28px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;margin-bottom:5px;}
+.sdesc{font-size:14px;color:var(--tx2);line-height:1.7;max-width:680px;}
+
+/* PAIN */
+.pcards{display:flex;flex-direction:column;gap:8px;}
+.pcard{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border:1px solid var(--bd);border-radius:6px;background:var(--ink2);cursor:pointer;transition:all .2s;}
+.pcard:hover{border-color:var(--bd2);background:var(--plate);}
+.pcard.hot{border-color:var(--red);background:var(--rlo);}
+.pico{width:34px;height:34px;border-radius:6px;background:var(--rlo);border:1px solid rgba(232,69,69,.3);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.pctitle{font-family:var(--df);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;}
+.pcbody{font-size:13px;color:var(--tx2);line-height:1.6;}
+.pccost{font-family:var(--mf);font-size:12px;color:var(--red);margin-top:5px;}
+
+/* COST BOX */
+.cbox{background:var(--ink2);border:1px solid var(--bd);border-radius:6px;padding:18px 20px;margin-bottom:14px;}
+.crow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px;}
+.crow:last-child{border-bottom:none;}
+.cl{color:var(--tx2);}
+.cv{font-family:var(--mf);color:var(--tx);}
+.cv.a{color:var(--amber);}
+.cv.r{color:var(--red);}
+.cv.l{color:var(--lime);}
+
+/* PHONE */
+.pstage{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;}
+.pcol{flex:0 0 240px;}
+.pdet{flex:1;min-width:240px;}
+.phone{width:240px;background:#111;border-radius:24px;padding:10px;border:2px solid #2a2d38;box-shadow:0 24px 60px rgba(0,0,0,.6);}
+.pnotch{width:64px;height:5px;background:#1a1d24;border-radius:3px;margin:0 auto 10px;}
+.pscreen{background:#fff;border-radius:16px;overflow:hidden;min-height:380px;}
+.pstop{background:#f5a623;padding:10px 12px;display:flex;align-items:center;gap:8px;}
+.pava{width:28px;height:28px;border-radius:50%;background:#0d0f12;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--amber);flex-shrink:0;}
+.pnm{font-size:12px;font-weight:600;color:#0d0f12;}
+.pst{font-size:10px;color:rgba(13,15,18,.6);}
+.pmsgs{padding:10px;display:flex;flex-direction:column;gap:6px;min-height:240px;}
+.bub{max-width:88%;padding:7px 11px;border-radius:10px;font-size:11px;line-height:1.5;}
+.bub.crew{background:#f0f0f0;color:#111;border-radius:3px 10px 10px 10px;align-self:flex-start;}
+.bub.ai{background:#f5a623;color:#0d0f12;border-radius:10px 3px 10px 10px;align-self:flex-end;font-weight:500;}
+.bub.sys{background:#e8f5e9;color:#2e7d32;border-radius:8px;align-self:center;font-size:10px;text-align:center;padding:6px 10px;}
+.tsform{margin:6px 10px;background:#fafafa;border:1px solid #e0e0e0;border-radius:8px;padding:10px;}
+.tsl{font-size:10px;font-weight:600;color:#444;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
+.tsf{width:100%;border:1px solid #ddd;border-radius:5px;padding:6px 8px;font-size:11px;color:#222;background:white;margin-bottom:5px;}
+.tss{width:100%;background:#f5a623;border:none;border-radius:5px;padding:7px;font-size:11px;font-weight:600;color:#0d0f12;cursor:pointer;transition:background .15s;}
+.tss:hover{background:#e8920d;}
+.tss:disabled{background:#ccc;cursor:not-allowed;}
+
+/* TERMINAL */
+.term{background:#080a0d;border:1px solid var(--bd);border-radius:6px;overflow:hidden;}
+.tbar{display:flex;align-items:center;gap:8px;padding:9px 14px;background:#0d0f12;border-bottom:1px solid var(--bd);}
+.td{width:10px;height:10px;border-radius:50%;}
+.td.r{background:#ff5f57;}.td.y{background:#febc2e;}.td.g{background:#28c840;}
+.ttit{font-family:var(--mf);font-size:11px;color:var(--tx3);margin-left:4px;}
+.tbody{padding:14px 16px;font-family:var(--mf);font-size:12px;line-height:2;min-height:80px;}
+.tl{opacity:0;transform:translateY(3px);display:flex;gap:10px;}
+.tl.show{animation:tlin .2s ease forwards;}
+@keyframes tlin{to{opacity:1;transform:translateY(0)}}
+.tt{color:var(--tx3);flex-shrink:0;}
+.tk{flex-shrink:0;}
+.tk.ok{color:var(--lime);}.tk.warn{color:var(--amber);}.tk.err{color:var(--red);}.tk.info{color:var(--blue);}
+.tm{color:var(--tx2);}
+
+/* EMAIL */
+.emock{background:white;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;max-width:480px;margin:0 auto;font-family:-apple-system,system-ui,sans-serif;}
+.ehdr{background:#f8f8f8;padding:12px 16px;border-bottom:1px solid #e8e8e8;}
+.efrom{font-size:12px;color:#666;margin-bottom:3px;}
+.esubj{font-size:14px;font-weight:600;color:#111;}
+.ebody{padding:16px;}
+.ebody p{font-size:13px;color:#333;line-height:1.7;margin-bottom:12px;}
+.etbl{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:12px;}
+.etbl th{background:#f5f5f5;padding:7px 10px;text-align:left;color:#555;border:1px solid #e8e8e8;font-weight:500;}
+.etbl td{padding:7px 10px;border:1px solid #e8e8e8;color:#222;}
+.etbl tr.hi td{background:#fff8e1;}
+.ecta{text-align:center;margin:16px 0 8px;}
+.eapprove{background:#22c55e;border:none;border-radius:6px;padding:11px 28px;font-size:14px;font-weight:600;color:white;cursor:pointer;transition:all .15s;margin-right:8px;}
+.eapprove:hover{background:#16a34a;transform:translateY(-1px);}
+.eapprove:disabled{background:#9ca3af;cursor:not-allowed;transform:none;}
+.edecline{background:#f3f4f6;border:1px solid #d1d5db;border-radius:6px;padding:11px 20px;font-size:13px;color:#374151;cursor:pointer;}
+.eok{background:#dcfce7;border:1px solid #bbf7d0;border-radius:6px;padding:12px 16px;text-align:center;display:none;font-size:13px;color:#166534;font-weight:500;}
+
+/* XERO */
+.xframe{border:1px solid #1e4a72;border-radius:8px;overflow:hidden;margin-bottom:14px;}
+.xbar{background:#13294b;padding:10px 16px;display:flex;align-items:center;gap:8px;}
+.xlogo{font-family:var(--mf);font-size:12px;color:#5bb3f0;font-weight:700;letter-spacing:.04em;}
+.xtbl{width:100%;border-collapse:collapse;background:#0d1e33;}
+.xtbl th{padding:8px 12px;text-align:left;font-family:var(--mf);font-size:10px;color:#3d6a8a;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #1a3a5c;}
+.xtbl td{padding:9px 12px;border-bottom:1px solid #132030;font-size:13px;color:#a0c8e8;}
+.xtbl tr:last-child td{border-bottom:none;}
+.xtbl tr.xnew td{background:rgba(126,200,80,.06);color:#c8e8c8;}
+.xtbl tr.xnew td:first-child{border-left:2px solid var(--lime);}
+
+/* PO */
+.poc{background:white;border:1px solid #e0e0e0;border-radius:8px;padding:18px;font-family:-apple-system,system-ui,sans-serif;max-width:480px;margin:0 auto;}
+.pohdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #f0f0f0;}
+.potit{font-size:16px;font-weight:700;color:#111;}
+.ponum{font-size:12px;color:#666;margin-top:3px;}
+.poauto{background:#fef9c3;color:#854d0e;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;border:1px solid #fde68a;}
+.potbl{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px;}
+.potbl th{background:#f8f8f8;padding:6px 10px;text-align:left;color:#555;border-bottom:2px solid #e0e0e0;}
+.potbl td{padding:6px 10px;border-bottom:1px solid #f0f0f0;color:#222;}
+.potot{text-align:right;font-size:14px;font-weight:700;color:#111;padding-top:8px;border-top:2px solid #111;}
+.poftr{font-size:11px;color:#888;text-align:center;margin-top:10px;}
+
+/* GAUGE */
+.gwrap{margin-bottom:14px;}
+.ghdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.gtit{font-family:var(--df);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.gpct{font-family:var(--df);font-size:22px;font-weight:800;color:var(--lime);}
+.gbar{height:16px;background:var(--ink2);border-radius:3px;overflow:hidden;position:relative;border:1px solid var(--bd);}
+.gfill{height:100%;border-radius:2px;transition:width 1.4s cubic-bezier(.4,0,.2,1);}
+.gtick{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.15);}
+.gsub{font-family:var(--mf);font-size:11px;color:var(--tx3);margin-top:5px;display:flex;justify-content:space-between;}
+
+/* REPORT */
+.rpanel{background:var(--ink2);border:1px solid var(--bd);border-radius:6px;overflow:hidden;margin-bottom:14px;}
+.rtop{background:var(--plate);padding:12px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
+.rmeta{font-family:var(--mf);font-size:11px;color:var(--tx3);}
+.stabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.stab{padding:6px 16px;border-radius:4px;font-family:var(--df);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;border:1px solid var(--bd);background:transparent;color:var(--tx3);transition:all .15s;}
+.stab.active{background:var(--amber);color:var(--ink);border-color:var(--amber);}
+.cbars{display:flex;align-items:flex-end;gap:8px;height:80px;margin:10px 0 4px;padding:0 4px;}
+.cb{flex:1;border-radius:3px 3px 0 0;background:var(--plate2);transition:height .8s cubic-bezier(.4,0,.2,1),background .3s;min-height:4px;cursor:default;position:relative;}
+.cb:hover{background:var(--amber);}
+.cbtt{position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--plate);border:1px solid var(--bd2);border-radius:4px;padding:3px 7px;font-family:var(--mf);font-size:10px;color:var(--tx);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;}
+.cb:hover .cbtt{opacity:1;}
+.clbls{display:flex;gap:8px;padding:0 4px;}
+.clbl{flex:1;font-family:var(--mf);font-size:9px;color:var(--tx3);text-align:center;}
+
+/* COMPARE */
+.cmp{display:grid;grid-template-columns:1fr 32px 1fr;gap:0;margin-bottom:14px;}
+.cbef{background:var(--rlo);border:1px solid rgba(232,69,69,.25);border-radius:6px 0 0 6px;padding:16px 18px;}
+.cmid{background:var(--ink2);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:center;color:var(--tx3);}
+.caft{background:var(--llo);border:1px solid rgba(126,200,80,.25);border-radius:0 6px 6px 0;padding:16px 18px;}
+.cmplab{font-family:var(--mf);font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:12px;}
+.cbef .cmplab{color:var(--red);}
+.caft .cmplab{color:var(--lime);}
+.cmrow{font-size:13px;line-height:1.7;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.cmrow:last-child{border-bottom:none;}
+.cbef .cmrow{color:#f08080;}
+.caft .cmrow{color:#a8e890;}
+
+.mets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.met{background:var(--plate);border:1px solid var(--bd);border-radius:6px;padding:16px;text-align:center;}
+.metn{font-family:var(--df);font-size:30px;font-weight:800;color:var(--amber);margin-bottom:4px;}
+.metl{font-family:var(--mf);font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;}
+
+.price{background:linear-gradient(135deg,var(--plate) 0%,var(--plate2) 100%);border:1px solid var(--bd2);border-radius:6px;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:14px;}
+.pri{text-align:center;}
+.prl{font-family:var(--mf);font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.prv{font-family:var(--df);font-size:26px;font-weight:800;color:var(--amber);}
+.prs{font-size:11px;color:var(--tx3);margin-top:3px;}
+.prd{width:1px;height:50px;background:var(--bd);}
+
+/* BUTTONS */
+.btn{padding:10px 22px;border-radius:5px;font-family:var(--df);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;border:none;transition:all .2s;}
+.ba{background:var(--amber);color:var(--ink);}
+.ba:hover{background:var(--amber2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,166,35,.3);}
+.bg{background:transparent;color:var(--tx2);border:1px solid var(--bd2);}
+.bg:hover{border-color:var(--amber);color:var(--amber);}
+.bl2{background:var(--lime);color:var(--ink);}
+.bl2:hover{background:#6eb843;}
+.bfw{width:100%;padding:13px;font-size:15px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important;}
+
+.snav{display:flex;align-items:center;justify-content:space-between;margin-top:24px;padding-top:20px;border-top:1px solid var(--bd);}
+.snavinfo{font-family:var(--mf);font-size:11px;color:var(--tx3);letter-spacing:.04em;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--mf);font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px;letter-spacing:.04em;}
+.blime{background:var(--llo);color:var(--lime);border:1px solid rgba(126,200,80,.3);}
+.bamber{background:var(--alo);color:var(--amber);border:1px solid rgba(245,166,35,.3);}
+.bred{background:var(--rlo);color:var(--red);border:1px solid rgba(232,69,69,.3);}
+.bblue{background:var(--blo);color:var(--blue);border:1px solid rgba(59,130,246,.3);}
+
+.help{font-size:12px;color:var(--tx3);padding:10px 14px;background:var(--ink2);border-radius:4px;border-left:2px solid var(--bd2);margin-top:10px;font-family:var(--mf);}
+
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--plate2);border:1px solid var(--bd2);border-radius:6px;padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tx);max-width:320px;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);box-shadow:0 12px 40px rgba(0,0,0,.6);}
+.toast.show{transform:translateY(0);opacity:1;}
+
+@media(max-width:620px){
+  .kpis{flex-wrap:wrap;}
+  .kpi{flex:0 0 50%;border-bottom:1px solid var(--bd);}
+  .kpi:nth-child(2){border-right:none;}
+  .kpi:nth-child(3){border-bottom:none;}
+  .kpi:nth-child(4){border-bottom:none;border-right:none;}
+  .pstage{flex-direction:column;}
+  .pcol{flex:unset;width:100%;display:flex;justify-content:center;}
+  .cmp{grid-template-columns:1fr;gap:6px;}
+  .cbef{border-radius:6px;}.cmid{display:none;}.caft{border-radius:6px;}
+  .mets{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+  <!-- DEMO NAV BAR -->
+<div style="position:fixed; top:0; left:0; right:0; z-index:9999; background:rgba(13,15,20,0.95); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,0.07); padding:0.75rem 5%; display:flex; align-items:center; justify-content:space-between; font-family:'DM Sans',sans-serif;">
+  <a href="../demos.html" style="color:#00cfff; font-size:0.85rem; font-weight:600; text-decoration:none;">← Back to Demos</a>
+  <a href="../index.html#contact" style="background:#00cfff; color:#000; padding:0.4rem 1rem; border-radius:100px; font-size:0.8rem; font-weight:700; text-decoration:none;">Book a Call</a>
+</div>
+<div style="height:52px;"></div>
+
+<nav style="position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(13,15,20,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.07);padding:0.75rem 5%;display:flex;align-items:center;justify-content:space-between;font-family:'DM Sans',sans-serif;">
+  <a href="../demos.html" style="color:#00cfff;font-size:0.85rem;font-weight:600;text-decoration:none;">← Back to Demos</a>
+  <a href="../index.html#contact" style="background:#00cfff;color:#000;padding:0.4rem 1rem;border-radius:100px;font-size:0.8rem;font-weight:700;text-decoration:none;">Book a Call</a>
+</nav>
+<div style="height:52px;"></div>
+<div class="app">
+
+<div class="hdr">
+  <div class="brand">
+    <div class="lp">LP</div>
+    <div class="bname"><em>LogicPrompt</em> AI</div>
+  </div>
+  <div class="slive"><div class="bl"></div>SYSTEM LIVE</div>
+</div>
+
+<div class="hero">
+  <div class="htag">Construction automation · Tauranga, Bay of Plenty</div>
+  <h1 class="hh1">Stop Chasing<br><em>Timesheets.</em><br>Start Building.</h1>
+  <p class="hsub">An interactive walkthrough of how Hemi Build Group eliminated manual payroll admin, auto-generated POs, and got real-time site cost visibility — without changing how their crew works on site.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="kn">$35/hr</div><div class="kl">NZ construction avg. wage (ERI, 2026)</div></div>
+    <div class="kpi"><div class="kn">26 hrs</div><div class="kl">Median PAYE admin per year (Xero, 2024)</div></div>
+    <div class="kpi"><div class="kn">1–2 hrs</div><div class="kl">Manual pay run time per fortnight</div></div>
+    <div class="kpi"><div class="kn">$0</div><div class="kl">Admin time after this build</div></div>
+  </div>
+</div>
+
+<div class="rail" role="tablist">
+  <button class="rb active" onclick="goS(0)" id="t0" role="tab"><span class="rn">01</span><span class="ri">😤</span><span>The Pain</span></button>
+  <button class="rb" onclick="goS(1)" id="t1" role="tab"><span class="rn">02</span><span class="ri">📱</span><span>Timesheet</span></button>
+  <button class="rb" onclick="goS(2)" id="t2" role="tab"><span class="rn">03</span><span class="ri">✅</span><span>Approval</span></button>
+  <button class="rb" onclick="goS(3)" id="t3" role="tab"><span class="rn">04</span><span class="ri">📊</span><span>Xero+PO</span></button>
+  <button class="rb" onclick="goS(4)" id="t4" role="tab"><span class="rn">05</span><span class="ri">📈</span><span>Report</span></button>
+  <button class="rb" onclick="goS(5)" id="t5" role="tab"><span class="rn">06</span><span class="ri">🏗</span><span>Outcome</span></button>
+</div>
+
+<!-- STAGE 0 -->
+<div id="s0" class="stage on">
+  <div class="shead">
+    <div class="stag">Before LogicPrompt AI</div>
+    <div class="stitle">Hemi Build Group — Tauranga</div>
+    <div class="sdesc">Jason runs 4 active sites with 18 crew across Bay of Plenty. The builds are going well. The admin is eating him alive. Click each frustration to see what it's costing.</div>
+  </div>
+  <div class="pcards" id="pcards">
+    <div class="pcard" onclick="trigPain(0)" id="pc0">
+      <div class="pico">📄</div>
+      <div><div class="pctitle">Timesheets via WhatsApp &amp; paper</div>
+      <div class="pcbody">Crew submits hours via WhatsApp voice notes, photos of handwritten sheets, or nothing at all. The office manager spends Monday morning decoding what arrived over the weekend.</div>
+      <div class="pccost" id="c0"></div></div>
+    </div>
+    <div class="pcard" onclick="trigPain(1)" id="pc1">
+      <div class="pico">⏰</div>
+      <div><div class="pctitle">Payroll takes half a day every fortnight</div>
+      <div class="pcbody">Chasing 18 crew members for missing hours before the cutoff. Manually reconciling hours against sites. Re-entering into Xero. At NZD $35/hr office rate, that's $245 in admin cost per pay run.</div>
+      <div class="pccost" id="c1"></div></div>
+    </div>
+    <div class="pcard" onclick="trigPain(2)" id="pc2">
+      <div class="pico">🔁</div>
+      <div><div class="pctitle">POs raised manually — duplicates common</div>
+      <div class="pcbody">Office manager creates purchase orders in Xero by hand from emailed supplier quotes. Duplicate POs happen regularly. Incorrect amounts get processed. Month-end reconciliation is a forensic exercise.</div>
+      <div class="pccost" id="c2"></div></div>
+    </div>
+    <div class="pcard" onclick="trigPain(3)" id="pc3">
+      <div class="pico">🔍</div>
+      <div><div class="pctitle">No real-time view of site costs</div>
+      <div class="pcbody">Jason finds out a site is over budget at month-end — too late to course-correct. Labour costs posted late, materials untracked mid-project. He's running four $400k+ sites completely blind.</div>
+      <div class="pccost" id="c3"></div></div>
+    </div>
+  </div>
+  <div class="cbox" style="margin-top:14px;">
+    <div class="stag" style="margin-bottom:12px;">The real annual cost of doing this manually</div>
+    <div class="crow"><span class="cl">Payroll admin — 26 fortnightly pay runs × 1.5 hrs × $35/hr</span><span class="cv r">$1,365/yr in office time</span></div>
+    <div class="crow"><span class="cl">Chasing missing timesheets — est. 30 min/wk × 50 wks × $35/hr</span><span class="cv r">$875/yr</span></div>
+    <div class="crow"><span class="cl">Manual PO entry errors — est. 1/month × avg. $500 correction</span><span class="cv r">$6,000–12,000/yr</span></div>
+    <div class="crow"><span class="cl">Budget over-run losses from late visibility — est.</span><span class="cv r">$3,000–8,000/yr</span></div>
+    <div class="crow" style="padding-top:10px;"><span class="cl" style="font-weight:600;color:var(--tx);">Conservative annual total</span><span class="cv a" style="font-size:17px;">$11,000–22,000 NZD</span></div>
+  </div>
+  <div class="snav"><div></div><div class="snavinfo">STAGE 1 OF 6</div><button class="btn ba" onclick="goS(1)">Watch it fixed →</button></div>
+</div>
+
+<!-- STAGE 1 -->
+<div id="s1" class="stage">
+  <div class="shead">
+    <div class="stag">Friday 4:47 PM — Site 4 Papamoa</div>
+    <div class="stitle">Crew submits hours from their phone</div>
+    <div class="sdesc">Mike — concreter, 4 years with Hemi Build — sends his weekly hours exactly as he always has. Via a simple chat message. No app to install. No login. Just a message. Try it yourself.</div>
+  </div>
+  <div class="pstage">
+    <div class="pcol">
+      <div class="phone">
+        <div class="pnotch"></div>
+        <div class="pscreen">
+          <div class="pstop">
+            <div class="pava">LP</div>
+            <div style="flex:1"><div class="pnm">Hemi Build — TimeBot</div><div class="pst" id="pst">● Online</div></div>
+          </div>
+          <div class="pmsgs" id="pm1">
+            <div class="bub crew">Hey, submitting my hours for this week 🤙</div>
+            <div class="tsform" id="tsf">
+              <div class="tsl">Quick timesheet — Mike Taufa</div>
+              <select class="tsf" id="ts-site">
+                <option>Site 4 — Papamoa</option>
+                <option>Site 7 — Mount Maunganui</option>
+                <option>Site 2 — Bethlehem</option>
+              </select>
+              <select class="tsf" id="ts-days">
+                <option value="5">5 days (Mon–Fri)</option>
+                <option value="4">4 days (Mon–Thu)</option>
+                <option value="3">3 days (Mon–Wed)</option>
+              </select>
+              <select class="tsf" id="ts-hrs">
+                <option value="8">8 hrs/day</option>
+                <option value="9">9 hrs/day</option>
+                <option value="10">10 hrs/day (OT applies)</option>
+              </select>
+              <input class="tsf" id="ts-note" placeholder="Notes (optional)" value="Poured slab on Block C">
+              <button class="tss" id="tsbtn" onclick="submitTS()">Submit timesheet ✓</button>
+            </div>
+          </div>
+          <div class="pmsgs" id="pm2" style="display:none;padding-top:0;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="pdet">
+      <div class="panel">
+        <div class="pbar"><div class="ptitle">System <em>processing</em></div><span class="badge bblue" id="pbadge">WAITING</span></div>
+        <div class="pbody" style="padding:14px 16px;">
+          <div class="term">
+            <div class="tbar"><div class="td r"></div><div class="td y"></div><div class="td g"></div><span class="ttit">logicprompt · timesheet-intake</span></div>
+            <div class="tbody" id="plog" style="min-height:130px;"><div style="color:var(--tx3);font-size:11px;">— awaiting submission —</div></div>
+          </div>
+          <div id="pres" style="display:none;margin-top:14px;">
+            <div class="cbox" style="padding:14px 16px;">
+              <div class="stag" style="margin-bottom:8px;">Parsed timesheet record</div>
+              <div class="crow"><span class="cl">Employee</span><span class="cv">Mike Taufa</span></div>
+              <div class="crow"><span class="cl">Site</span><span class="cv" id="r-site">—</span></div>
+              <div class="crow"><span class="cl">Period</span><span class="cv" id="r-days">—</span></div>
+              <div class="crow"><span class="cl">Total hours</span><span class="cv a" id="r-hrs">—</span></div>
+              <div class="crow"><span class="cl">Labour cost</span><span class="cv a" id="r-cost">—</span></div>
+              <div class="crow"><span class="cl">Status</span><span><span class="badge bamber">⏳ PENDING APPROVAL</span></span></div>
+            </div>
+            <button class="btn ba" onclick="goS(2)" style="margin-top:12px;">See Jason's approval →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="help">← Fill in the timesheet on the phone and hit Submit. Try changing the site, days, or hours — each scenario flows through differently.</div>
+  <div class="snav"><button class="btn bg" onclick="goS(0)">← Back</button><div class="snavinfo">STAGE 2 OF 6</div><button class="btn ba" onclick="goS(2)">Skip to approval →</button></div>
+</div>
+
+<!-- STAGE 2 -->
+<div id="s2" class="stage">
+  <div class="shead">
+    <div class="stag">Friday 4:49 PM — Jason's phone</div>
+    <div class="stitle">Jason gets one email. One tap to approve.</div>
+    <div class="sdesc">Two minutes after Mike's submission, Jason's phone buzzes. Not a notification to "check the app." A plain email — full timesheet summary, one green button. No login. No app. Done from the dinner table.</div>
+  </div>
+  <div class="panel" style="max-width:500px;margin:0 auto 14px;">
+    <div class="pbar"><div class="ptitle">Jason's <em>inbox — 4:49 PM</em></div><span class="badge bamber" id="abadge">PENDING</span></div>
+    <div class="pbody" style="padding:0;">
+      <div class="emock">
+        <div class="ehdr">
+          <div class="efrom">From: LogicPrompt AI &lt;noreply@logicpromptai.co.nz&gt;</div>
+          <div class="esubj" id="esubj">⏱ Timesheet approval — Mike Taufa · Site 4 Papamoa</div>
+        </div>
+        <div class="ebody">
+          <p>Hi Jason,</p><p>Mike Taufa has submitted his timesheet for this week. One tap to approve and Xero updates automatically.</p>
+          <table class="etbl">
+            <thead><tr><th>Field</th><th>Details</th></tr></thead>
+            <tbody>
+              <tr><td>Employee</td><td>Mike Taufa</td></tr>
+              <tr class="hi"><td>Site</td><td id="em-site">Site 4 — Papamoa</td></tr>
+              <tr class="hi"><td>Hours</td><td id="em-hrs">40 hrs (Mon–Fri, 8hr/day)</td></tr>
+              <tr><td>Notes</td><td id="em-note">Poured slab on Block C</td></tr>
+              <tr class="hi"><td>Labour cost</td><td id="em-cost">$1,400.00 NZD</td></tr>
+              <tr><td>Week ending</td><td>Friday 16 May 2026</td></tr>
+            </tbody>
+          </table>
+          <div class="ecta">
+            <button class="eapprove" id="abtn" onclick="approveTS()">✓ Approve &amp; post to Xero</button>
+            <button class="edecline" onclick="flagTS()">Flag for review</button>
+          </div>
+          <div class="eok" id="eok">✅ Approved by Jason Hemi · 4:51 PM · Posted to Xero automatically</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="alogwrap" style="display:none;">
+    <div class="term">
+      <div class="tbar"><div class="td r"></div><div class="td y"></div><div class="td g"></div><span class="ttit">logicprompt · approval-engine</span></div>
+      <div class="tbody" id="alog"></div>
+    </div>
+    <div id="aafter" style="display:none;margin-top:14px;"><button class="btn ba" onclick="goS(3)">See Xero update &amp; PO →</button></div>
+  </div>
+  <div class="help">← Click "✓ Approve &amp; post to Xero" to trigger the full automation. Try "Flag for review" to see the exception path.</div>
+  <div class="snav"><button class="btn bg" onclick="goS(1)">← Back</button><div class="snavinfo">STAGE 3 OF 6</div><button class="btn ba" onclick="goS(3)">Skip to Xero →</button></div>
+</div>
+
+<!-- STAGE 3 -->
+<div id="s3" class="stage">
+  <div class="shead">
+    <div class="stag">4:51 PM — Automatic — zero manual entry</div>
+    <div class="stitle">Xero updated. PO generated. Done.</div>
+    <div class="sdesc">The moment Jason taps approve, the system posts the labour cost to Xero against the correct job code and auto-generates a purchase order for materials logged this week. Nobody touched Xero manually.</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;">
+    <div>
+      <div class="xframe">
+        <div class="xbar"><div class="xlogo">XERO</div><span style="font-size:12px;color:#4a7aaa;margin-left:4px;">— Hemi Build Group · Job costing</span><span class="badge blime" style="margin-left:auto;">● LIVE</span></div>
+        <table class="xtbl">
+          <thead><tr><th>Site / Job</th><th>Type</th><th>Amount NZD</th><th>Status</th></tr></thead>
+          <tbody id="xtbody">
+            <tr><td>Site 7 — Mt Maunganui</td><td>Labour W19</td><td>$4,900.00</td><td><span class="badge blime">Posted</span></td></tr>
+            <tr><td>Site 2 — Bethlehem</td><td>Materials W19</td><td>$12,400.00</td><td><span class="badge blime">Posted</span></td></tr>
+            <tr><td>Site 2 — Bethlehem</td><td>Labour W19</td><td>$3,150.00</td><td><span class="badge blime">Posted</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn bl2" id="xbtn" onclick="postXero()" style="margin-top:10px;width:100%;">▶ Post Mike's timesheet to Xero</button>
+    </div>
+    <div>
+      <div class="panel">
+        <div class="pbar"><div class="ptitle">Auto-generated <em>PO</em></div><span class="badge bamber" id="pobadge">AUTO</span></div>
+        <div class="pbody" style="padding:14px;">
+          <div class="poc">
+            <div class="pohdr">
+              <div><div class="potit">PURCHASE ORDER</div><div class="ponum" id="ponum">PO-2026-0412 · Auto-generated</div></div>
+              <div class="poauto">AUTO</div>
+            </div>
+            <table class="potbl">
+              <thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Total</th></tr></thead>
+              <tbody id="potbody">
+                <tr><td>Ready-mix concrete (40MPa)</td><td>14</td><td>m³ @ $180</td><td>$2,520</td></tr>
+                <tr><td>Reinforcing steel mesh (SL72)</td><td>24</td><td>sheets @ $68</td><td>$1,632</td></tr>
+                <tr><td>Formwork timber (F17)</td><td>18</td><td>lm @ $12.50</td><td>$225</td></tr>
+              </tbody>
+            </table>
+            <div class="potot" id="potot">Total: $4,377.00 NZD + GST</div>
+            <div class="poftr">Pacific Concrete Supplies · Site 4 Papamoa · Auto-matched from weekly materials log</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cbox">
+    <div class="stag" style="margin-bottom:10px;">What just happened — no human touched Xero</div>
+    <div class="crow"><span class="cl">Labour cost posted to job code</span><span class="cv l" id="xlabour">$1,400.00 — Site 4 Papamoa</span></div>
+    <div class="crow"><span class="cl">PO auto-generated from materials log</span><span class="cv l">$4,377.00 — Pacific Concrete Supplies</span></div>
+    <div class="crow"><span class="cl">IRD payday filing queued</span><span class="cv l">Automatic — next pay run</span></div>
+    <div class="crow"><span class="cl">Budget vs actual updated</span><span class="cv l">Real-time</span></div>
+    <div class="crow"><span class="cl">Manual Xero entries by office manager</span><span class="cv l">Zero</span></div>
+  </div>
+  <div class="snav"><button class="btn bg" onclick="goS(2)">← Back</button><div class="snavinfo">STAGE 4 OF 6</div><button class="btn ba" onclick="goS(4)">See weekly report →</button></div>
+</div>
+
+<!-- STAGE 4 -->
+<div id="s4" class="stage">
+  <div class="shead">
+    <div class="stag">Monday 7:00 AM — Jason's inbox</div>
+    <div class="stitle">Weekly cost report. Arrived automatically.</div>
+    <div class="sdesc">Every Monday Jason wakes up to a full cost report across all four sites. Labour, materials, budget status. No one generated it. It just arrived. Click a site tab to drill down.</div>
+  </div>
+  <div class="rpanel">
+    <div class="rtop"><div class="ptitle">WEEKLY COST REPORT — <em>HEMI BUILD GROUP</em></div><div class="rmeta">W/E 16 MAY 2026 · AUTO-GENERATED MON 7:00 AM</div></div>
+    <div style="padding:18px;">
+      <div class="stabs" id="stabs">
+        <button class="stab active" onclick="showSite(0)">Site 4 — Papamoa</button>
+        <button class="stab" onclick="showSite(1)">Site 7 — Mt Maunganui</button>
+        <button class="stab" onclick="showSite(2)">Site 2 — Bethlehem</button>
+        <button class="stab" onclick="showSite(3)">Site 9 — Katikati</button>
+      </div>
+      <div id="sitedet"></div>
+    </div>
+  </div>
+  <div class="snav"><button class="btn bg" onclick="goS(3)">← Back</button><div class="snavinfo">STAGE 5 OF 6</div><button class="btn ba" onclick="goS(5)">See the outcome →</button></div>
+</div>
+
+<!-- STAGE 5 -->
+<div id="s5" class="stage">
+  <div class="shead">
+    <div class="stag">The outcome — Hemi Build Group, Tauranga</div>
+    <div class="stitle">What changes for Jason's business.</div>
+    <div class="sdesc">Jason approves timesheets from his phone in one tap. Xero updates itself, POs are generated automatically, and he gets a weekly cost report without asking anyone for it.</div>
+  </div>
+  <div class="cmp">
+    <div class="cbef">
+      <div class="cmplab">Before</div>
+      <div class="cmrow">📄 WhatsApp timesheets + paper scraps</div>
+      <div class="cmrow">⏰ 1.5 hrs per fortnightly pay run</div>
+      <div class="cmrow">📞 Chasing crew every Monday morning</div>
+      <div class="cmrow">🔁 Manual PO entry — errors every month</div>
+      <div class="cmrow">🔍 No real-time budget visibility</div>
+      <div class="cmrow">😤 Jason on admin instead of on site</div>
+      <div class="cmrow">💸 $11k–22k/yr in wasted admin cost</div>
+    </div>
+    <div class="cmid">→</div>
+    <div class="caft">
+      <div class="cmplab">After LogicPrompt AI</div>
+      <div class="cmrow">📱 Crew submits via chat — under 60 sec</div>
+      <div class="cmrow">⚡ One-tap approval from Jason's phone</div>
+      <div class="cmrow">✅ Zero chasing — auto-reminders sent</div>
+      <div class="cmrow">🤖 POs auto-generated from materials log</div>
+      <div class="cmrow">📊 Real-time budget dashboard — all sites</div>
+      <div class="cmrow">🏗 Jason focused on building, not admin</div>
+      <div class="cmrow">💰 Under $90 NZD/month running cost</div>
+    </div>
+  </div>
+  <div class="mets">
+    <div class="met"><div class="metn">30 min</div><div class="metl">Payroll time saved per run</div></div>
+    <div class="met"><div class="metn">Real-time</div><div class="metl">Cost visibility — all sites</div></div>
+    <div class="met"><div class="metn">0</div><div class="metl">Manual PO errors</div></div>
+  </div>
+  <div class="cbox" style="margin-bottom:14px;">
+    <div class="stag" style="margin-bottom:12px;">ROI — conservative estimate, 18 crew, 4 sites</div>
+    <div class="crow"><span class="cl">Payroll admin eliminated — 26 runs/yr × 1.5 hrs × $35/hr</span><span class="cv l">$1,365 saved/yr</span></div>
+    <div class="crow"><span class="cl">Timesheet chasing eliminated — 30 min/wk × 50 wks × $35/hr</span><span class="cv l">$875 saved/yr</span></div>
+    <div class="crow"><span class="cl">Manual PO errors eliminated — est. 1/month × $500 avg</span><span class="cv l">$6,000 saved/yr</span></div>
+    <div class="crow"><span class="cl">Budget over-run prevention from earlier visibility</span><span class="cv l">$3,000–8,000 saved/yr</span></div>
+    <div class="crow" style="padding-top:10px;"><span class="cl" style="font-weight:600;color:var(--tx);">Estimated annual saving</span><span class="cv a" style="font-size:17px;">$11,000–16,000 NZD</span></div>
+    <div class="crow"><span class="cl">System running cost (all tools)</span><span class="cv l">&lt; $90 NZD/month</span></div>
+  </div>
+  <div class="price">
+    <div class="pri"><div class="prl">One-time build</div><div class="prv">$1,800–2,800</div><div class="prs">NZD · Delivered 7–10 days</div></div>
+    <div class="prd"></div>
+    <div class="pri"><div class="prl">Monthly retainer</div><div class="prv">$250–400</div><div class="prs">NZD/month · Optional</div></div>
+    <div class="prd"></div>
+    <div class="pri"><div class="prl">Payback period</div><div class="prv">~10 weeks</div><div class="prs">Conservative saving estimate</div></div>
+  </div>
+  <button class="btn ba bfw" onclick="toast('📅','Booking flow opened — LogicPrompt AI scoping call')">Build this for my business ↗</button>
+  <div class="snav"><button class="btn bg" onclick="goS(4)">← Back</button><div class="snavinfo">STAGE 6 OF 6</div><button class="btn bg" onclick="resetAll()">↺ Run demo again</button></div>
+</div>
+
+</div><!-- /app -->
+<div class="toast" id="toast"><span id="tico">✓</span>&nbsp;<span id="tmsg">Done</span></div>
+
+<script>
+const visited=new Set([0]);let cur=0;
+let tsData={site:'Site 4 — Papamoa',days:5,hrs:8,note:'Poured slab on Block C'};
+
+const sites=[
+  {n:'Site 4 — Papamoa',contract:420000,spent:393480,pct:94,wL:1400,wM:4377,bars:[12,14,11,8,14,10,13],alert:null},
+  {n:'Site 7 — Mt Maunganui',contract:680000,spent:469800,pct:69,wL:4900,wM:0,bars:[8,10,7,12,10,9,8],alert:null},
+  {n:'Site 2 — Bethlehem',contract:340000,spent:346800,pct:102,wL:3150,wM:12400,bars:[6,8,9,11,14,15,16],alert:'⚠ Site 2 is 2% over contract value. Review material costs this week.'},
+  {n:'Site 9 — Katikati',contract:290000,spent:58000,pct:20,wL:900,wM:0,bars:[0,0,0,3,5,7,9],alert:null},
+];
+
+function goS(n){
+  document.getElementById('s'+cur).classList.remove('on');
+  document.getElementById('t'+cur).classList.remove('active');
+  visited.add(n);cur=n;
+  document.getElementById('s'+n).classList.add('on');
+  document.querySelectorAll('.rb').forEach((b,i)=>{
+    b.classList.toggle('active',i===n);
+    if(i!==n&&visited.has(i))b.classList.add('done');
+  });
+  if(n===4)buildReport();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+const painCosts=['Est. $875/yr chasing missing submissions','Est. $1,365/yr in payroll admin labour','Est. $6,000–12,000/yr in PO error corrections','Est. $3,000–8,000/yr in over-run losses'];
+function trigPain(i){
+  document.querySelectorAll('.pcard').forEach((c,j)=>c.classList.toggle('hot',j===i));
+  document.getElementById('c'+i).textContent=painCosts[i];
+}
+
+async function submitTS(){
+  const btn=document.getElementById('tsbtn');
+  btn.disabled=true;btn.textContent='Submitting...';
+  tsData.site=document.getElementById('ts-site').value;
+  tsData.days=parseInt(document.getElementById('ts-days').value);
+  tsData.hrs=parseInt(document.getElementById('ts-hrs').value);
+  tsData.note=document.getElementById('ts-note').value||'—';
+  const total=tsData.days*tsData.hrs;
+  const cost=(total*35).toFixed(2);
+  document.getElementById('tsf').style.display='none';
+  const pm2=document.getElementById('pm2');
+  pm2.style.display='flex';pm2.style.flexDirection='column';pm2.style.gap='6px';
+  const dayLabel=tsData.days===5?'Mon–Fri':tsData.days===4?'Mon–Thu':'Mon–Wed';
+  pm2.innerHTML=`<div class="bub crew">${dayLabel}, ${tsData.site} — ${tsData.hrs} hrs each day. ${tsData.note}</div>`;
+  await sleep(800);
+  pm2.innerHTML+=`<div class="bub sys">✓ Received by TimeBot</div>`;
+  await sleep(600);
+  pm2.innerHTML+=`<div class="bub ai">Got it Mike 👍 ${total} hours, ${tsData.site}. Approval email sent to Jason now.</div>`;
+  const log=document.getElementById('plog');log.innerHTML='';
+  document.getElementById('pbadge').textContent='PROCESSING';document.getElementById('pbadge').className='badge bamber';
+  const lines=[
+    ['info',`Message received — employee: Mike Taufa`],
+    ['info',`Site parsed: ${tsData.site}`],
+    ['ok',`Hours extracted: ${total} hrs over ${tsData.days} days`],
+    ['ok',`Labour cost calculated: NZD $${cost}`],
+    ['ok',`Duplicate check passed — no prior submission this week`],
+    ['info',`Approval email generated → jason@hemibuild.co.nz`],
+    ['ok',`Email dispatched — one-click approval link included`],
+  ];
+  for(const[t,m]of lines){await sleep(360);addLog(log,t,m);}
+  document.getElementById('pbadge').textContent='APPROVAL PENDING';document.getElementById('pbadge').className='badge blime';
+  document.getElementById('r-site').textContent=tsData.site;
+  document.getElementById('r-days').textContent=dayLabel+', '+tsData.days+' days';
+  document.getElementById('r-hrs').textContent=total+' hrs';
+  document.getElementById('r-cost').textContent='$'+cost+' NZD';
+  document.getElementById('pres').style.display='block';
+  // update email
+  document.getElementById('em-site').textContent=tsData.site;
+  document.getElementById('em-hrs').textContent=`${total} hrs (${dayLabel}, ${tsData.hrs}hr/day)`;
+  document.getElementById('em-note').textContent=tsData.note;
+  document.getElementById('em-cost').textContent=`$${cost} NZD`;
+  document.getElementById('esubj').textContent=`⏱ Timesheet approval — Mike Taufa · ${tsData.site}`;
+  toast('📱','Submitted — approval email sent to Jason');
+}
+
+async function approveTS(){
+  const btn=document.getElementById('abtn');btn.disabled=true;btn.textContent='Approving...';
+  document.getElementById('alogwrap').style.display='block';
+  const log=document.getElementById('alog');log.innerHTML='';
+  const total=tsData.days*tsData.hrs;const cost=(total*35).toFixed(2);
+  const lines=[
+    ['ok','Approval confirmed — Jason Hemi · 4:51 PM'],
+    ['info',`Timesheet locked — ${total} hrs · ${tsData.site}`],
+    ['ok','Labour cost staged for Xero posting'],
+    ['info','Job code matched — auto-assigned to project account'],
+    ['ok',`PO auto-generated from materials log — ${tsData.site}`],
+    ['ok','IRD payday filing queued for next pay run'],
+    ['ok','Budget vs actual updated — dashboard refreshed'],
+    ['ok','Weekly cost report updated — Jason notified Monday 7:00 AM'],
+  ];
+  for(const[t,m]of lines){await sleep(340);addLog(log,t,m);}
+  document.getElementById('eok').style.display='block';
+  document.getElementById('abadge').textContent='APPROVED';document.getElementById('abadge').className='badge blime';
+  document.getElementById('aafter').style.display='block';
+  document.getElementById('xlabour').textContent=`$${cost} — ${tsData.site}`;
+  toast('✅','Approved — Xero posting queued, PO generated');
+}
+
+function flagTS(){
+  toast('⚠','Flagged for review — Jason notified to add a note before posting');
+  document.getElementById('abadge').textContent='FLAGGED';document.getElementById('abadge').className='badge bred';
+}
+
+async function postXero(){
+  const btn=document.getElementById('xbtn');btn.disabled=true;btn.textContent='Posting...';
+  const total=tsData.days*tsData.hrs;const cost=(total*35).toFixed(2);
+  await sleep(900);
+  const tbody=document.getElementById('xtbody');
+  const nr=document.createElement('tr');nr.className='xnew';
+  nr.innerHTML=`<td>${tsData.site}</td><td>Labour W20 — M.Taufa</td><td>$${cost}</td><td><span class="badge blime">● Just posted</span></td>`;
+  tbody.insertBefore(nr,tbody.firstChild);
+  document.getElementById('xlabour').textContent=`$${cost} — ${tsData.site}`;
+  document.getElementById('pobadge').textContent='GENERATED';document.getElementById('pobadge').className='badge blime';
+  if(tsData.site.includes('Maunganui')){
+    document.getElementById('potbody').innerHTML=`<tr><td>Structural steel (RHS 100×50)</td><td>8</td><td>lengths @ $220</td><td>$1,760</td></tr><tr><td>Masonry blocks (200mm)</td><td>480</td><td>units @ $3.20</td><td>$1,536</td></tr>`;
+    document.getElementById('potot').textContent='Total: $3,296.00 NZD + GST';
+  } else if(tsData.site.includes('Bethlehem')){
+    document.getElementById('potbody').innerHTML=`<tr><td>H3 treated framing timber</td><td>120</td><td>lm @ $8.40</td><td>$1,008</td></tr><tr><td>Gib board (10mm standard)</td><td>60</td><td>sheets @ $22</td><td>$1,320</td></tr>`;
+    document.getElementById('potot').textContent='Total: $2,328.00 NZD + GST';
+  }
+  document.getElementById('ponum').textContent='PO-2026-0413 · Auto-generated · '+new Date().toLocaleDateString('en-NZ');
+  btn.textContent='✓ Posted to Xero';
+  toast('📊','Xero updated — PO auto-generated');
+}
+
+function buildReport(){if(document.getElementById('sitedet').innerHTML.trim())return;showSite(0);}
+function showSite(i){
+  document.querySelectorAll('.stab').forEach((t,j)=>t.classList.toggle('active',j===i));
+  const s=sites[i];const pc=s.pct>100?'#e84545':s.pct>90?'#f5a623':'#7ec850';
+  const bh=s.bars.map(v=>v===0?4:Math.round((v/Math.max(...s.bars))*76));
+  document.getElementById('sitedet').innerHTML=`
+    <div class="gwrap">
+      <div class="ghdr"><div class="gtit">${s.n} — Budget vs Actual</div><div class="gpct" style="color:${pc}">${s.pct}%</div></div>
+      <div class="gbar"><div class="gfill" id="gf${i}" style="width:0%;background:${pc}"></div><div class="gtick" style="left:80%"></div><div class="gtick" style="left:100%"></div></div>
+      <div class="gsub"><span>$0</span><span>Contract: $${(s.contract/1000).toFixed(0)}k</span><span>Spent: $${(s.spent/1000).toFixed(0)}k</span></div>
+    </div>
+    ${s.alert?`<div style="background:var(--rlo);border:1px solid rgba(232,69,69,.3);border-radius:5px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:12px;">${s.alert}</div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div class="cbox" style="padding:12px 14px;"><div class="stag" style="font-size:10px;margin-bottom:8px;">Labour this week</div>
+        <div style="font-family:var(--df);font-size:28px;font-weight:800;color:var(--amber);">$${s.wL.toLocaleString()}</div>
+        <div style="font-family:var(--mf);font-size:10px;color:var(--tx3);margin-top:4px;">NZD · Auto-posted from timesheets</div></div>
+      <div class="cbox" style="padding:12px 14px;"><div class="stag" style="font-size:10px;margin-bottom:8px;">Materials this week</div>
+        <div style="font-family:var(--df);font-size:28px;font-weight:800;color:${s.wM>0?'var(--amber)':'var(--tx3)'};">$${s.wM.toLocaleString()}</div>
+        <div style="font-family:var(--mf);font-size:10px;color:var(--tx3);margin-top:4px;">${s.wM>0?'NZD · Auto-PO generated':'No materials logged this week'}</div></div>
+    </div>
+    <div class="cbox" style="padding:12px 14px;">
+      <div class="stag" style="font-size:10px;margin-bottom:10px;">Daily labour hours — this week</div>
+      <div class="cbars">${s.bars.map((v,bi)=>`<div class="cb" style="height:${bh[bi]}px"><div class="cbtt">${v} hrs</div></div>`).join('')}</div>
+      <div class="clbls">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<div class="clbl">${d}</div>`).join('')}</div>
+    </div>`;
+  setTimeout(()=>{const gf=document.getElementById('gf'+i);if(gf)gf.style.width=Math.min(s.pct,100)+'%';},100);
+}
+
+function resetAll(){
+  tsData={site:'Site 4 — Papamoa',days:5,hrs:8,note:'Poured slab on Block C'};
+  document.getElementById('tsf').style.display='block';
+  document.getElementById('tsbtn').disabled=false;document.getElementById('tsbtn').textContent='Submit timesheet ✓';
+  document.getElementById('pm2').innerHTML='';document.getElementById('pm2').style.display='none';
+  document.getElementById('plog').innerHTML='<div style="color:var(--tx3);font-size:11px;">— awaiting submission —</div>';
+  document.getElementById('pbadge').textContent='WAITING';document.getElementById('pbadge').className='badge bblue';
+  document.getElementById('pres').style.display='none';
+  document.getElementById('abtn').disabled=false;document.getElementById('abtn').textContent='✓ Approve & post to Xero';
+  document.getElementById('eok').style.display='none';
+  document.getElementById('alogwrap').style.display='none';
+  document.getElementById('alog').innerHTML='';
+  document.getElementById('abadge').textContent='PENDING';document.getElementById('abadge').className='badge bamber';
+  document.getElementById('aafter').style.display='none';
+  document.getElementById('xbtn').disabled=false;document.getElementById('xbtn').textContent='▶ Post Mike\'s timesheet to Xero';
+  document.getElementById('pobadge').textContent='AUTO';document.getElementById('pobadge').className='badge bamber';
+  document.getElementById('xtbody').innerHTML='<tr><td>Site 7 — Mt Maunganui</td><td>Labour W19</td><td>$4,900.00</td><td><span class="badge blime">Posted</span></td></tr><tr><td>Site 2 — Bethlehem</td><td>Materials W19</td><td>$12,400.00</td><td><span class="badge blime">Posted</span></td></tr><tr><td>Site 2 — Bethlehem</td><td>Labour W19</td><td>$3,150.00</td><td><span class="badge blime">Posted</span></td></tr>';
+  document.getElementById('sitedet').innerHTML='';
+  document.querySelectorAll('.pcard').forEach(c=>c.classList.remove('hot'));
+  document.querySelectorAll('[id^="c"]').forEach(c=>{if(['c0','c1','c2','c3'].includes(c.id))c.textContent='';});
+  visited.clear();visited.add(0);
+  document.querySelectorAll('.rb').forEach(b=>b.classList.remove('done'));
+  goS(0);toast('↺','Demo reset — ready to run again');
+}
+
+function addLog(c,tag,msg){
+  const t=new Date().toTimeString().slice(0,8);
+  const tags={ok:'[ OK ]',warn:'[WARN]',err:'[ERR ]',info:'[INFO]'};
+  const d=document.createElement('div');d.className='tl';
+  d.innerHTML=`<span class="tt">${t}</span><span class="tk ${tag}">${tags[tag]}</span><span class="tm">${msg}</span>`;
+  c.appendChild(d);requestAnimationFrame(()=>d.classList.add('show'));c.scrollTop=c.scrollHeight;
+}
+function toast(ico,msg){
+  const t=document.getElementById('toast');
+  document.getElementById('tico').textContent=ico;document.getElementById('tmsg').textContent=msg;
+  t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200);
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+</script>
+
+
+</body></html>

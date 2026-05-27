@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LogicPrompt AI — AI Receptionist | Healthcare & Business NZ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8f9fc;--bg2:#f0f2f7;--bg3:#e8eaf2;
+  --white:#ffffff;--ink:#0f1117;--ink2:#1e2130;
+  --blue:#2563eb;--blue2:#1d4ed8;--blo:rgba(37,99,235,.08);--bmd:rgba(37,99,235,.15);
+  --teal:#0d9488;--tlo:rgba(13,148,136,.10);
+  --amber:#d97706;--alo:rgba(217,119,6,.10);
+  --rose:#dc2626;--rlo:rgba(220,38,38,.08);
+  --green:#16a34a;--glo:rgba(22,163,74,.10);
+  --purple:#7c3aed;--plo:rgba(124,58,237,.10);
+  --tx:#374151;--tx2:#6b7280;--tx3:#9ca3af;
+  --bd:#e5e7eb;--bd2:#d1d5db;
+  --sans:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+  --r:10px;--r2:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:14px;line-height:1.6;}
+
+/* LAYOUT */
+.app{max-width:1060px;margin:0 auto;padding:0 20px 80px;}
+
+/* MASTHEAD */
+.mast{display:flex;align-items:center;justify-content:space-between;padding:20px 0 18px;border-bottom:1px solid var(--bd);margin-bottom:36px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.lp{width:34px;height:34px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;font-family:var(--mono);}
+.bname{font-size:15px;font-weight:600;color:var(--ink);}
+.bname span{color:var(--blue);}
+.livebadge{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--teal);background:var(--tlo);border:1px solid rgba(13,148,136,.25);padding:4px 11px;border-radius:20px;font-family:var(--mono);font-weight:500;}
+.dp{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:dp 2s infinite;}
+@keyframes dp{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* HERO */
+.hero{text-align:center;padding:32px 0 36px;}
+.htag{font-family:var(--mono);font-size:11px;color:var(--blue);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;}
+.h1{font-size:clamp(28px,4.5vw,44px);font-weight:700;color:var(--ink);line-height:1.2;margin-bottom:12px;}
+.h1 span{color:var(--blue);}
+.hsub{font-size:15px;color:var(--tx2);max-width:560px;margin:0 auto 28px;font-weight:400;line-height:1.7;}
+.krow{display:flex;justify-content:center;gap:0;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;max-width:580px;margin:0 auto;background:var(--white);}
+.ks{flex:1;padding:14px 12px;text-align:center;border-right:1px solid var(--bd);}
+.ks:last-child{border-right:none;}
+.kn{font-size:20px;font-weight:700;color:var(--ink);font-family:var(--mono);}
+.kl{font-size:10px;color:var(--tx3);margin-top:3px;text-transform:uppercase;letter-spacing:.04em;}
+
+/* NICHE SELECTOR */
+.nsel{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap;}
+.ntab{flex:1;min-width:140px;padding:14px 12px;border-radius:var(--r);border:2px solid var(--bd);background:var(--white);cursor:pointer;transition:all .2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.ntab:hover{border-color:var(--bd2);background:var(--bg2);}
+.ntab.active{border-color:var(--blue);background:var(--blo);}
+.ntab .nico{font-size:24px;}
+.ntab .nlabel{font-size:12px;font-weight:600;color:var(--tx);line-height:1.3;}
+.ntab.active .nlabel{color:var(--blue);}
+.ntab .nsub{font-size:10px;color:var(--tx3);}
+
+/* NICHE CONTENT */
+.ncontent{display:none;}
+.ncontent.on{display:block;}
+
+/* STAGE NAV */
+.snav{display:flex;gap:0;margin-bottom:28px;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;background:var(--white);}
+.sb{flex:1;padding:10px 6px;background:transparent;border:none;border-right:1px solid var(--bd);color:var(--tx3);font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px;line-height:1.3;font-family:var(--sans);}
+.sb:last-child{border-right:none;}
+.sb .snum{font-family:var(--mono);font-size:9px;color:var(--tx3);}
+.sb .sico{font-size:15px;}
+.sb.active{background:var(--blue);color:white;}
+.sb.active .snum{color:rgba(255,255,255,.7);}
+.sb.done{color:var(--green);}
+.sb.done .snum{color:var(--green);}
+
+/* STAGES */
+.stage{display:none;animation:si .22s ease;}
+.stage.on{display:block;}
+@keyframes si{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--bd);border-radius:var(--r2);padding:20px 22px;margin-bottom:14px;}
+.chead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--bd);}
+.ctitle{font-size:14px;font-weight:600;color:var(--ink);}
+.ctitle em{color:var(--blue);font-style:normal;}
+
+/* STAGE HEAD */
+.sh{margin-bottom:22px;}
+.stag{font-family:var(--mono);font-size:10px;color:var(--blue);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
+.st{font-size:24px;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:6px;}
+.sd{font-size:14px;color:var(--tx2);line-height:1.7;max-width:680px;}
+
+/* PAIN */
+.pgrid{display:flex;flex-direction:column;gap:8px;}
+.pcard{display:flex;gap:12px;padding:14px 16px;border:1px solid var(--bd);border-radius:var(--r);background:var(--white);cursor:pointer;transition:all .15s;align-items:flex-start;}
+.pcard:hover{border-color:var(--bd2);background:var(--bg);}
+.pcard.hot{border-color:rgba(220,38,38,.4);background:var(--rlo);}
+.pico{width:32px;height:32px;border-radius:8px;background:var(--rlo);border:1px solid rgba(220,38,38,.2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.ptit{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px;}
+.pbody{font-size:13px;color:var(--tx2);line-height:1.6;}
+.pcost{font-family:var(--mono);font-size:11px;color:var(--rose);margin-top:5px;}
+
+/* DATA ROWS */
+.drows{display:flex;flex-direction:column;}
+.dr{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px;}
+.dr:last-child{border-bottom:none;}
+.dl{color:var(--tx2);}
+.dv{font-family:var(--mono);color:var(--ink);font-weight:500;}
+.dv.bl{color:var(--blue);}
+.dv.gr{color:var(--green);}
+.dv.am{color:var(--amber);}
+.dv.ro{color:var(--rose);}
+
+/* PHONE */
+.phonewrap{display:flex;justify-content:center;margin-bottom:14px;}
+.phone{width:250px;background:#1a1a2e;border-radius:26px;padding:10px;border:3px solid #252540;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.pnotch{width:60px;height:5px;background:#0f0f1f;border-radius:3px;margin:0 auto 10px;}
+.pscreen{background:white;border-radius:18px;overflow:hidden;min-height:360px;display:flex;flex-direction:column;}
+.ptop{display:flex;align-items:center;gap:8px;padding:10px 12px;}
+.pava{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0;}
+.pnm{font-size:12px;font-weight:600;color:var(--ink);}
+.pst{font-size:10px;color:var(--tx2);}
+.pmsgs{flex:1;padding:10px;display:flex;flex-direction:column;gap:6px;min-height:230px;}
+.bub{max-width:85%;padding:8px 11px;border-radius:10px;font-size:11px;line-height:1.5;}
+.bub.pat{background:#f3f4f6;color:#111;border-radius:3px 10px 10px 10px;align-self:flex-start;}
+.bub.bot{color:white;border-radius:10px 3px 10px 10px;align-self:flex-end;}
+.bub.sys{background:#f0fdf4;color:#166534;border-radius:8px;align-self:center;font-size:10px;text-align:center;padding:5px 10px;border:1px solid #bbf7d0;}
+.pinput{background:#f9fafb;border-top:1px solid #e5e7eb;padding:8px 12px;display:flex;align-items:center;gap:6px;}
+.pifield{flex:1;background:white;border:1px solid #e5e7eb;border-radius:18px;padding:6px 12px;font-size:11px;color:var(--tx2);}
+.pisend{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;}
+
+/* CONSOLE */
+.con{background:#0f172a;border:1px solid #1e293b;border-radius:var(--r);overflow:hidden;}
+.conbar{display:flex;align-items:center;gap:7px;padding:8px 14px;background:#0a0f1e;border-bottom:1px solid #1e293b;}
+.cdot{width:10px;height:10px;border-radius:50%;}
+.cdot.r{background:#ff5f57;}.cdot.y{background:#febc2e;}.cdot.g{background:#28c840;}
+.contit{font-family:var(--mono);font-size:11px;color:#475569;margin-left:4px;}
+.conbody{padding:12px 14px;font-family:var(--mono);font-size:11px;line-height:1.9;min-height:70px;}
+.tl{opacity:0;transform:translateY(2px);display:flex;gap:8px;}
+.tl.show{animation:tlin .2s ease forwards;}
+@keyframes tlin{to{opacity:1;transform:translateY(0)}}
+.tt{color:#475569;flex-shrink:0;}
+.tk{flex-shrink:0;}
+.tk.ok{color:#34d399;}.tk.warn{color:#fbbf24;}.tk.err{color:#f87171;}.tk.inf{color:#60a5fa;}
+.tm{color:#94a3b8;}
+
+/* PROGRESS */
+.pb{height:3px;background:#e2e8f0;border-radius:2px;overflow:hidden;margin:6px 0 4px;}
+.pbf{height:100%;border-radius:2px;background:var(--blue);transition:width 1.2s ease;}
+.pbm{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--tx3);}
+
+/* METRICS */
+.mets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.met{background:var(--white);border:1px solid var(--bd);border-radius:var(--r);padding:16px;text-align:center;}
+.metn{font-size:26px;font-weight:700;color:var(--blue);font-family:var(--mono);margin-bottom:3px;}
+.metl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;}
+
+/* COMPARE */
+.cmp{display:grid;grid-template-columns:1fr 28px 1fr;gap:0;margin-bottom:14px;}
+.cbef{background:#fff5f5;border:1px solid #fed7d7;border-radius:var(--r) 0 0 var(--r);padding:16px 18px;}
+.cmid{background:var(--bg2);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:center;color:var(--tx3);font-size:13px;}
+.caft{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:0 var(--r) var(--r) 0;padding:16px 18px;}
+.cmlab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:500;margin-bottom:10px;}
+.cbef .cmlab{color:var(--rose);}
+.caft .cmlab{color:var(--green);}
+.cmrow{font-size:13px;line-height:1.7;padding:3px 0;border-bottom:1px solid rgba(0,0,0,.04);}
+.cmrow:last-child{border-bottom:none;}
+.cbef .cmrow{color:#b91c1c;}
+.caft .cmrow{color:#15803d;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;letter-spacing:.03em;}
+.b-bl{background:var(--blo);color:var(--blue);border:1px solid rgba(37,99,235,.25);}
+.b-gr{background:var(--glo);color:var(--green);border:1px solid rgba(22,163,74,.25);}
+.b-am{background:var(--alo);color:var(--amber);border:1px solid rgba(217,119,6,.25);}
+.b-ro{background:var(--rlo);color:var(--rose);border:1px solid rgba(220,38,38,.25);}
+.b-pu{background:var(--plo);color:var(--purple);border:1px solid rgba(124,58,237,.25);}
+
+/* PRICE */
+.price{background:var(--ink2);border-radius:var(--r2);padding:22px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:14px;}
+.pitem{text-align:center;}
+.plbl{font-family:var(--mono);font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.pval{font-size:22px;font-weight:700;color:#f5d26b;font-family:var(--mono);}
+.psub{font-size:11px;color:#6b7280;margin-top:3px;}
+.pdiv{width:1px;height:46px;background:#374151;}
+
+/* BTNS */
+.btn{padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:var(--sans);}
+.btn-blue{background:var(--blue);color:white;}
+.btn-blue:hover{background:var(--blue2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(37,99,235,.3);}
+.btn-ghost{background:transparent;color:var(--tx2);border:1px solid var(--bd2);}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue);}
+.btn-teal{background:var(--teal);color:white;}
+.btn-teal:hover{background:#0f766e;}
+.btn-full{width:100%;padding:13px;font-size:14px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important;}
+
+.bnav{display:flex;align-items:center;justify-content:space-between;margin-top:22px;padding-top:18px;border-top:1px solid var(--bd);}
+.bi{font-family:var(--mono);font-size:10px;color:var(--tx3);letter-spacing:.05em;}
+
+.help{font-size:12px;color:var(--tx3);padding:9px 13px;background:var(--bg2);border-radius:6px;border-left:2px solid var(--bd2);margin-top:10px;font-family:var(--mono);}
+
+/* COST BOX */
+.cbox{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:16px 18px;margin-bottom:14px;}
+
+/* INLINE GRID */
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;}
+.tgrid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;z-index:999;background:var(--ink2);border:1px solid #374151;border-radius:var(--r);padding:11px 16px;display:flex;align-items:center;gap:8px;font-size:13px;color:white;max-width:300px;transform:translateY(70px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* SOCIAL POST */
+.spost{background:white;border:1px solid #dbdbdb;border-radius:8px;overflow:hidden;max-width:340px;margin:0 auto;font-family:-apple-system,system-ui,sans-serif;}
+.sp-header{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #dbdbdb;}
+.sp-ava{width:30px;height:30px;border-radius:50%;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:flex;align-items:center;justify-content:center;font-size:12px;color:white;font-weight:700;}
+.sp-name{font-size:13px;font-weight:600;color:#111;}
+.sp-time{font-size:11px;color:#8e8e8e;}
+.sp-img{width:100%;height:160px;object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:40px;}
+.sp-actions{padding:8px 12px 4px;display:flex;gap:14px;}
+.sp-action{font-size:20px;cursor:pointer;}
+.sp-caption{padding:4px 12px 12px;font-size:13px;color:#111;line-height:1.5;}
+.sp-caption strong{font-weight:600;}
+
+/* FORM SELECTOR */
+.doc-opts{display:flex;flex-direction:column;gap:6px;}
+.doc-opt{display:flex;gap:10px;padding:10px 14px;border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;transition:all .15s;background:var(--white);align-items:flex-start;}
+.doc-opt:hover{border-color:var(--bd2);background:var(--bg);}
+.doc-opt.sel{border-color:var(--blue);background:var(--blo);}
+.doc-opt-ico{font-size:20px;flex-shrink:0;}
+.doc-opt-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.doc-opt-sub{font-size:12px;color:var(--tx2);}
+.doc-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.chip{font-family:var(--mono);font-size:10px;padding:1px 7px;border-radius:3px;}
+.chip-b{background:var(--blo);color:var(--blue);border:1px solid rgba(37,99,235,.2);}
+.chip-r{background:var(--rlo);color:var(--rose);border:1px solid rgba(220,38,38,.2);}
+.chip-g{background:var(--glo);color:var(--green);border:1px solid rgba(22,163,74,.2);}
+
+/* SCENARIO PICKER */
+.scenario-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.scbtn{padding:7px 16px;border-radius:6px;font-size:12px;font-weight:500;border:1px solid var(--bd);background:var(--white);cursor:pointer;color:var(--tx);transition:all .15s;}
+.scbtn.active{background:var(--blue);color:white;border-color:var(--blue);}
+.scbtn:hover:not(.active){border-color:var(--bd2);background:var(--bg2);}
+
+/* PHONE CALL STATUS */
+.callbar{background:var(--green);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cbl{font-size:12px;color:white;font-weight:600;}
+.cbt{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.85);}
+
+@media(max-width:620px){
+  .nsel{flex-direction:column;}
+  .ntab{flex:unset;}
+  .tgrid,.tgrid-3{grid-template-columns:1fr;}
+  .cmp{grid-template-columns:1fr;gap:6px;}
+  .cbef{border-radius:var(--r);}.cmid{display:none;}.caft{border-radius:var(--r);}
+  .mets{grid-template-columns:1fr 1fr;}
+  .krow{flex-wrap:wrap;}
+  .ks{flex:0 0 50%;border-bottom:1px solid var(--bd);}
+  .ks:nth-child(2){border-right:none;}
+  .ks:nth-child(3){border-bottom:none;}
+  .ks:nth-child(4){border-bottom:none;border-right:none;}
+}
+</style>
+</head>
+<body>
+
+  <!-- DEMO NAV BAR -->
+<div style="position:fixed; top:0; left:0; right:0; z-index:9999; background:rgba(13,15,20,0.95); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,0.07); padding:0.75rem 5%; display:flex; align-items:center; justify-content:space-between; font-family:'DM Sans',sans-serif;">
+  <a href="../demos.html" style="color:#00cfff; font-size:0.85rem; font-weight:600; text-decoration:none;">← Back to Demos</a>
+  <a href="../index.html#contact" style="background:#00cfff; color:#000; padding:0.4rem 1rem; border-radius:100px; font-size:0.8rem; font-weight:700; text-decoration:none;">Book a Call</a>
+</div>
+<div style="height:52px;"></div>
+
+<div class="app">
+
+<!-- MASTHEAD -->
+<div class="mast">
+  <div class="brand">
+    <div class="lp">LP</div>
+    <div class="bname"><span>LogicPrompt</span> AI</div>
+  </div>
+  <div class="livebadge"><div class="dp"></div>LIVE DEMO</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="htag">AI Receptionist · New Zealand</div>
+  <h1 class="h1">Every call answered.<br><span>Every appointment booked.</span><br>Zero missed patients.</h1>
+  <p class="hsub">Interactive walkthrough across four NZ business types. Pick your industry and simulate the full flow — from first call to confirmed booking.</p>
+  <div class="krow">
+    <div class="ks"><div class="kn">35%</div><div class="kl">Calls missed without AI (DenteMax, 2025)</div></div>
+    <div class="ks"><div class="kn">$850</div><div class="kl">Lost per missed new patient call (Resonate AI)</div></div>
+    <div class="ks"><div class="kn">31%</div><div class="kl">No-show reduction with SMS reminders (TNZ, 2025)</div></div>
+    <div class="ks"><div class="kn">24/7</div><div class="kl">Coverage with LogicPrompt AI</div></div>
+  </div>
+</div>
+
+<!-- NICHE SELECTOR -->
+<div class="nsel" role="tablist" id="niche-tabs">
+  <div class="ntab active" onclick="pickNiche(0)" role="tab">
+    <div class="nico">🦷</div>
+    <div class="nlabel">Dental Practice</div>
+    <div class="nsub">Tane Family Dental · Hamilton</div>
+  </div>
+  <div class="ntab" onclick="pickNiche(1)" role="tab">
+    <div class="nico">🏃</div>
+    <div class="nlabel">Allied Health & Physio</div>
+    <div class="nsub">Brennan Physio · Christchurch</div>
+  </div>
+  <div class="ntab" onclick="pickNiche(2)" role="tab">
+    <div class="nico">🧠</div>
+    <div class="nlabel">Psychology & Mental Health</div>
+    <div class="nsub">Feld Psychology · Auckland</div>
+  </div>
+  <div class="ntab" onclick="pickNiche(3)" role="tab">
+    <div class="nico">📞</div>
+    <div class="nlabel">AI Receptionist Universal</div>
+    <div class="nsub">Any business · Anywhere in NZ</div>
+  </div>
+</div>
+
+<!-- ═══════════════ NICHE 0: DENTAL ═══════════════ -->
+<div id="n0" class="ncontent on"></div>
+<!-- ═══════════════ NICHE 1: ALLIED ═══════════════ -->
+<div id="n1" class="ncontent"></div>
+<!-- ═══════════════ NICHE 2: PSYCH ═══════════════ -->
+<div id="n2" class="ncontent"></div>
+<!-- ═══════════════ NICHE 3: UNIVERSAL ═══════════════ -->
+<div id="n3" class="ncontent"></div>
+
+</div>
+<div class="toast" id="toast"><span id="tico">✓</span>&nbsp;<span id="tmsg">Done</span></div>
+
+<script>
+// ═══════ DATA ═══════
+const niches = [
+  {
+    id:0, key:'dental',
+    color:'#2563eb', colorLight:'#eff6ff', avatarBg:'#2563eb',
+    clinic:'Tane Family Dental', location:'Hamilton, Waikato',
+    icon:'🦷', pronoun:'Dr.',
+    pains:[
+      {ico:'📵', tit:'Phone rings at 7pm — no one answers',body:"Patient calls after hours, hits voicemail, and books with the next clinic that picks up. Each missed new patient call costs the practice an average of $850 in immediate first-year revenue (DenteMax, 2025)."},
+      {ico:'⏰', tit:'Receptionist spends 2 hrs/day on phone tag',body:"Manually calling patients to confirm appointments, handling cancellations, chasing rebookings. That's roughly $30–$40 in staff time per day — $10,000+ per year on confirmation calls alone."},
+      {ico:'🪑', tit:'3–4 slots unfilled every week from no-shows',body:"Without reminders, the average no-show rate is 11–18%. For a dental practice with $250 average appointment value, 3 no-shows a week = $3,900/year in empty chair time."},
+      {ico:'📱', tit:'Owner manually calls back voicemails at 9pm',body:"75% of missed callers never call back — they book elsewhere (Resonate AI, 2025). By 9pm, those patients are gone."},
+    ],
+    scenarios:[
+      {label:'Adult check-up (7pm)',
+       msgs:[
+         {role:'pat',text:"Hi, I need to book a check-up. Do you have anything this week?"},
+         {role:'bot',text:"Hi there! Yes, we have openings Thursday at 10am and Friday at 2pm. Is this for an adult or child appointment?"},
+         {role:'pat',text:"Adult, just a check-up. Thursday works."},
+         {role:'bot',text:"Perfect — Thursday 10am is confirmed for Dr. Tane. I'll send a confirmation to your mobile and a reminder the day before. See you Thursday!"},
+         {role:'sys',text:"✓ Booked · Confirmation SMS sent · Reminder queued"},
+       ],
+       log:[
+         ['inf','Inbound call detected — 7:04 PM (after hours)'],
+         ['ok','AI receptionist answered in 3 rings'],
+         ['ok','Intent identified: new patient check-up booking'],
+         ['ok','Thursday 10:00 AM — Dr. Tane confirmed available'],
+         ['ok','Appointment booked — Google Calendar updated'],
+         ['ok','Confirmation SMS dispatched to patient mobile'],
+         ['ok','Reminder queued: 24hrs before appointment'],
+         ['ok','New patient record created in CRM'],
+         ['ok','Owner daily summary updated'],
+       ],
+       crm:[
+         {l:'Patient',v:'New booking — adult check-up'},
+         {l:'Appointment',v:'Thu 10:00 AM'},
+         {l:'Reminder',v:'Sent automatically',c:'gr'},
+         {l:'Response time',v:'38 seconds',c:'bl'},
+         {l:'Status',v:'Confirmed',c:'gr'},
+       ]},
+      {label:'Emergency — toothache (10pm)',
+       msgs:[
+         {role:'pat',text:"I have a really bad toothache, is there any way I can see someone tomorrow?"},
+         {role:'bot',text:"I'm sorry to hear that — let's get you sorted. Dr. Tane has an emergency slot tomorrow at 8:30am. Does that work?"},
+         {role:'pat',text:"Yes please, that would be great."},
+         {role:'bot',text:"Done! 8:30am tomorrow confirmed. You'll receive an SMS with the address and what to expect. We'll see you then."},
+         {role:'sys',text:"✓ Emergency slot booked · SMS sent"},
+       ],
+       log:[
+         ['inf','Inbound call — 10:18 PM'],
+         ['warn','Pain/emergency keyword detected — priority flag'],
+         ['ok','Emergency appointment slot located: 8:30 AM tomorrow'],
+         ['ok','Appointment booked — flagged as emergency'],
+         ['ok','SMS confirmation sent with clinic address'],
+         ['ok','Owner notification: emergency booking overnight'],
+         ['ok','CRM record created — emergency triage notes'],
+       ],
+       crm:[
+         {l:'Patient',v:'Emergency — toothache'},
+         {l:'Appointment',v:'Tomorrow 8:30 AM (emergency slot)'},
+         {l:'Flag',v:'Emergency · Owner notified',c:'am'},
+         {l:'Response time',v:'41 seconds',c:'bl'},
+         {l:'Status',v:'Confirmed',c:'gr'},
+       ]},
+      {label:'New patient (after-hours form)',
+       msgs:[
+         {role:'pat',text:"Hi, I've just moved to Hamilton and I'm looking for a new family dentist. Do you take new patients?"},
+         {role:'bot',text:"Welcome to Hamilton! Yes, we're accepting new patients. Are you looking for an appointment for yourself, or the whole family?"},
+         {role:'pat',text:"Whole family — two adults and two kids."},
+         {role:'bot',text:"Wonderful. I'll book a new patient consultation for the family. What day suits best this week or next?"},
+         {role:'sys',text:"✓ Family intake registered · Appointments queued"},
+       ],
+       log:[
+         ['inf','Inbound call — new patient inquiry'],
+         ['ok','New patient intent identified — family of 4'],
+         ['ok','New patient consultation workflow triggered'],
+         ['ok','Four appointment slots reserved pending confirmation'],
+         ['ok','Intake form link sent via SMS'],
+         ['ok','CRM: new family record created'],
+         ['ok','Owner summary: new family patient — high LTV'],
+       ],
+       crm:[
+         {l:'Patient',v:'New family — 2 adults, 2 children'},
+         {l:'Type',v:'New patient intake'},
+         {l:'Appointments',v:'4 consultations queued',c:'bl'},
+         {l:'Response time',v:'52 seconds',c:'bl'},
+         {l:'Status',v:'Intake sent',c:'gr'},
+       ]},
+    ],
+    metrics:[{n:'24/7',l:'Phones answered'},{n:'< 60s',l:'Response time'},{n:'0',l:'Missed bookings'}],
+    outcome:"Dr. Tane's practice stopped losing after-hours appointments. The AI handles every call, books directly into the calendar, and sends reminders — without a single staff member involved.",
+    roi:[
+      {l:'Missed calls recovered (est. 3/week × 50 weeks)',v:'150 calls/year'},
+      {l:'Revenue recovered (150 × $850 avg. new patient value)',v:'$127,500/year',c:'gr'},
+      {l:'No-show reduction (31% drop via SMS reminders)',v:'~$3,900/year in chair time',c:'gr'},
+      {l:'Staff time freed from confirmation calls',v:'~2 hrs/day = $10,400/year',c:'gr'},
+      {l:'System running cost',v:'< $90 NZD/month'},
+    ],
+    build:'$700–1,000 NZD',retainer:'$250–400/mo',delivery:'7–10 days'
+  },
+  {
+    id:1, key:'allied',
+    color:'#0d9488', colorLight:'#f0fdfa', avatarBg:'#0d9488',
+    clinic:'Brennan Physio & Rehab', location:'Christchurch',
+    icon:'🏃', pronoun:'Kate',
+    pains:[
+      {ico:'📵', tit:'Calls during treatment — go to voicemail',body:"When Kate is treating a patient, the phone rings and no one answers. Industry data shows 28% of appointment requests come outside business hours — all missed without an AI system."},
+      {ico:'⏰', tit:'Front desk spends 1.5hrs/day on confirmations',body:"Manually confirming appointments by phone takes significant daily admin time. At $28/hr front desk rate, that's $42/day — $10,500/year — on calls that automated SMS reminders would eliminate."},
+      {ico:'🪑', tit:'No-show rate around 18% — lost revenue weekly',body:"Without reminders, 1 in 6 physio appointments go unfilled. At $120 average appointment value, 18% no-shows on 30 appointments/week = $648/week in lost revenue — $33,700/year."},
+      {ico:'🌙', tit:'After-hours requests not actioned until morning',body:"Patients who call at 6pm can't book until next day. Many don't call back. Automated after-hours booking eliminates this gap entirely."},
+    ],
+    scenarios:[
+      {label:'Knee rehab follow-up (5:45pm)',
+       msgs:[
+         {role:'pat',text:"I need a follow-up appointment for my knee rehab."},
+         {role:'bot',text:"Hi, thanks for calling Brennan Physio. I can see Kate has availability tomorrow at 11am or Thursday at 3pm — which works better for you?"},
+         {role:'pat',text:"Tomorrow at 11 please."},
+         {role:'bot',text:"Done — booked for tomorrow 11am with Kate. You'll get an SMS confirmation now and a reminder tomorrow morning."},
+         {role:'sys',text:"✓ Booked · SMS confirmation sent · Reminder set"},
+       ],
+       log:[
+         ['inf','Inbound call — 5:45 PM (during treatment session)'],
+         ['ok','AI answered — Kate in session, unavailable'],
+         ['ok','Patient intent: knee rehab follow-up'],
+         ['ok','Kate availability check — tomorrow 11am confirmed'],
+         ['ok','Appointment booked in Google Calendar'],
+         ['ok','SMS confirmation sent immediately'],
+         ['ok','Reminder queued: 8am tomorrow'],
+         ['ok','Patient record updated — knee rehab series'],
+       ],
+       crm:[
+         {l:'Patient',v:'Follow-up — knee rehab'},
+         {l:'Appointment',v:'Tomorrow 11:00 AM'},
+         {l:'SMS sent',v:'Confirmation + reminder',c:'gr'},
+         {l:'Response time',v:'Under 60 seconds',c:'bl'},
+         {l:'Status',v:'Booked',c:'gr'},
+       ]},
+      {label:'New patient — sports injury',
+       msgs:[
+         {role:'pat',text:"I injured my shoulder playing rugby last weekend and I'd like to see someone."},
+         {role:'bot',text:"Sorry to hear that! Kate specialises in sports rehab and has a new patient slot on Wednesday at 2pm. Shall I book that for you?"},
+         {role:'pat',text:"Wednesday at 2 sounds perfect."},
+         {role:'bot',text:"Booked! Wednesday 2pm with Kate. I've sent you a new patient intake form by SMS — takes about 5 minutes to complete before your appointment."},
+         {role:'sys',text:"✓ Booked · Intake form sent · Appointment confirmed"},
+       ],
+       log:[
+         ['inf','Inbound call — new patient sports injury'],
+         ['ok','Injury type identified — shoulder, rugby, acute'],
+         ['ok','New patient workflow triggered'],
+         ['ok','Wednesday 2:00 PM — Kate available (sports rehab)'],
+         ['ok','Appointment booked + confirmed'],
+         ['ok','Intake form SMS sent to patient'],
+         ['ok','New patient record created in CRM'],
+         ['ok','Kate notified — new patient Wednesday 2pm'],
+       ],
+       crm:[
+         {l:'Patient',v:'New — shoulder injury, sports rehab'},
+         {l:'Appointment',v:'Wednesday 2:00 PM'},
+         {l:'Intake form',v:'Sent via SMS',c:'bl'},
+         {l:'Response time',v:'44 seconds',c:'bl'},
+         {l:'Status',v:'New patient booked',c:'gr'},
+       ]},
+    ],
+    metrics:[{n:'18%',l:'No-show rate reduced'},{n:'1.5 hrs',l:'Daily admin saved'},{n:'24/7',l:'Booking available'}],
+    outcome:"Kate's practice captures every after-hours call. No voicemail, no missed patients. The no-show rate dropped once automated reminders went in — and front desk time freed up for patient care.",
+    roi:[
+      {l:'No-show reduction (31% drop via SMS, TNZ NZ data)',v:'~$10,500/year recovered'},
+      {l:'Front desk time freed (1.5 hrs/day × 250 days)',v:'$10,500/year in admin time'},
+      {l:'After-hours calls captured (est. 28% of inquiries)',v:'Significant new patient revenue'},
+      {l:'System running cost',v:'< $90 NZD/month'},
+    ],
+    build:'$700–1,000 NZD',retainer:'$250–400/mo',delivery:'7–10 days'
+  },
+  {
+    id:2, key:'psych',
+    color:'#7c3aed', colorLight:'#f5f3ff', avatarBg:'#7c3aed',
+    clinic:'Feld Psychology', location:'Auckland North Shore',
+    icon:'🧠', pronoun:'Dr. Feld',
+    pains:[
+      {ico:'📋', tit:'Intake forms returned in different formats',body:"New clients email back forms in PDFs, photos, Word docs, or not at all. The receptionist manually re-enters information before each first session. 20 minutes per new client, every time."},
+      {ico:'📞', tit:'Appointment reminders done manually',body:"The receptionist calls each client the day before their appointment. For a 30-client week, that's 30 calls — most going to voicemail. About 2 hours of daily admin eliminated by automated SMS."},
+      {ico:'🔄', tit:'Follow-up after sessions is inconsistent',body:"Some clients fall off between appointments because no one follows up. An automated check-in message 3 days post-session costs nothing and recovers the relationship before they disengage."},
+      {ico:'📝', tit:'Dr. Feld spends 20 min reviewing intake notes',body:"Scattered information across emails, paper forms, and calendar notes means prep time before every new session. Structured intake automation eliminates this entirely."},
+    ],
+    scenarios:[
+      {label:'New client — anxiety & sleep',
+       msgs:[
+         {role:'pat',text:"Hi, I'd like to book an appointment. I've been having anxiety issues and trouble sleeping."},
+         {role:'bot',text:"Thank you for reaching out — that takes courage. Dr. Feld specialises in anxiety and sleep concerns. Can I get your name to start the intake process?"},
+         {role:'pat',text:"It's Emma Wilson."},
+         {role:'bot',text:"Hi Emma. I'll send you a brief intake form by SMS now — it takes about 5 minutes. Once received, I'll confirm your first appointment with Dr. Feld."},
+         {role:'sys',text:"✓ Intake sent · Appointment reserved · Reminder queued"},
+       ],
+       log:[
+         ['inf','Inbound call — new client inquiry'],
+         ['ok','Presenting concerns noted: anxiety, sleep concerns'],
+         ['ok','New client intake workflow initiated'],
+         ['ok','Intake form sent via SMS — Emma Wilson'],
+         ['ok','Appointment reserved pending intake completion'],
+         ['ok','Intake received — summary auto-generated for Dr. Feld'],
+         ['ok','Confirmation SMS sent to Emma'],
+         ['ok','Post-session check-in scheduled (Day 3 after appointment)'],
+       ],
+       crm:[
+         {l:'Client',v:'New — anxiety, sleep concerns'},
+         {l:'Intake summary',v:'Ready for Dr. Feld',c:'bl'},
+         {l:'Appointment',v:'Confirmed + reminder set',c:'gr'},
+         {l:'Follow-up',v:'Auto-scheduled Day 3',c:'bl'},
+         {l:'Status',v:'Active',c:'gr'},
+       ]},
+      {label:'Existing client — rebooking',
+       msgs:[
+         {role:'pat',text:"Hi, I need to rebook my appointment — I have a work conflict on Wednesday."},
+         {role:'bot',text:"Of course. Dr. Feld has Thursday at 2pm or Friday at 10am this week. Which works better?"},
+         {role:'pat',text:"Friday at 10 please."},
+         {role:'bot',text:"Done — rebooked for Friday 10am with Dr. Feld. New confirmation on its way to you now."},
+         {role:'sys',text:"✓ Rebooked · Old slot released · New confirmation sent"},
+       ],
+       log:[
+         ['inf','Inbound call — existing client rebooking'],
+         ['ok','Client record matched — existing patient'],
+         ['ok','Wednesday slot released — made available'],
+         ['ok','Friday 10:00 AM confirmed with Dr. Feld'],
+         ['ok','Calendar updated — both changes logged'],
+         ['ok','Confirmation SMS sent to client'],
+         ['ok','Dr. Feld schedule updated'],
+       ],
+       crm:[
+         {l:'Client',v:'Existing — rebooking'},
+         {l:'Previous slot',v:'Wed — released for rebooking'},
+         {l:'New appointment',v:'Friday 10:00 AM',c:'bl'},
+         {l:'Confirmation',v:'SMS sent',c:'gr'},
+         {l:'Status',v:'Confirmed',c:'gr'},
+       ]},
+    ],
+    metrics:[{n:'20 min',l:'Pre-session prep saved'},{n:'100%',l:'Follow-ups sent'},{n:'0',l:'Intake forms lost'}],
+    outcome:"Dr. Feld walks into every session with a clean summary. Clients get reminders before appointments and a check-in after — without any manual coordination.",
+    roi:[
+      {l:'Pre-session prep eliminated (20 min × 25 sessions/week)',v:'~8 hrs/week freed'},
+      {l:'Manual reminder calls eliminated (2 hrs/day)',v:'$14,000/year in admin time'},
+      {l:'Follow-up rate 0% → 100%',v:'Measurable client retention improvement'},
+      {l:'System running cost',v:'< $90 NZD/month'},
+    ],
+    build:'$600–900 NZD',retainer:'$250–400/mo',delivery:'7–10 days'
+  },
+  {
+    id:3, key:'universal',
+    color:'#374151', colorLight:'#f9fafb', avatarBg:'#374151',
+    clinic:'Any Business', location:'Anywhere in NZ',
+    icon:'📞', pronoun:'The owner',
+    pains:[
+      {ico:'📵', tit:'Calls to voicemail during busy periods',body:"Every business has peak times when no one can answer. Those calls don't wait — they call the next business in the search results."},
+      {ico:'🔄', tit:'Staff answering repetitive FAQs all day',body:"Pricing, hours, availability, parking, services offered. The same questions every day. Staff time worth $28–$40/hr spent answering questions an AI can handle."},
+      {ico:'📋', tit:'No record of what callers asked',body:"Every voicemail that doesn't get logged is lost intelligence. What questions did people ask? What were they looking for? The AI logs every interaction."},
+      {ico:'🌙', tit:'After-hours leads hit a dead end',body:"28% of inquiries come outside business hours. Without an AI, those leads go cold. With it, they get an answer and book immediately."},
+    ],
+    scenarios:[
+      {label:'Pricing inquiry + booking (after hours)',
+       msgs:[
+         {role:'pat',text:"Hi, I wanted to ask about your pricing and whether you're taking new clients."},
+         {role:'bot',text:"Hi, thanks for calling! We are taking new clients — our packages start from $150. I can book you in for a quick 15-minute consultation to find the right fit. Does this week work?"},
+         {role:'pat',text:"Yes, Thursday afternoon would be great."},
+         {role:'bot',text:"Thursday 3pm confirmed. I've sent you a confirmation SMS. The owner will receive a summary of this call shortly."},
+         {role:'sys',text:"✓ Booked · Confirmation sent · Owner summary queued"},
+       ],
+       log:[
+         ['inf','Inbound call — 6:15 PM (after hours)'],
+         ['ok','AI answered — business closed, no staff available'],
+         ['inf','Intent: pricing + new client availability'],
+         ['ok','Pricing information delivered accurately'],
+         ['ok','Thursday 3:00 PM consultation booked'],
+         ['ok','Confirmation SMS sent to caller'],
+         ['ok','Owner daily summary updated with call details'],
+         ['ok','Call transcript and outcome logged'],
+       ],
+       crm:[
+         {l:'Call type',v:'New client inquiry — pricing'},
+         {l:'Outcome',v:'Consultation booked'},
+         {l:'Summary',v:'Sent to owner',c:'bl'},
+         {l:'Time',v:'After hours — 6:15pm',c:'am'},
+         {l:'Status',v:'Booked',c:'gr'},
+       ]},
+      {label:'FAQ — hours & location',
+       msgs:[
+         {role:'pat',text:"What are your opening hours and where are you located?"},
+         {role:'bot',text:"We're open Monday to Friday, 8am to 6pm, and Saturday 9am to 1pm. We're located at 42 Victoria Street — there's free parking on the street after 6pm and all day Saturday."},
+         {role:'pat',text:"And do you do consultations on Saturdays?"},
+         {role:'bot',text:"Yes, Saturday consultations are available — I can book one for you now if you'd like."},
+         {role:'sys',text:"✓ FAQ resolved · Booking offered"},
+       ],
+       log:[
+         ['inf','Inbound call — FAQ inquiry'],
+         ['ok','Hours and location delivered from knowledge base'],
+         ['ok','Parking information included automatically'],
+         ['ok','Follow-up question handled — Saturday availability'],
+         ['ok','Booking offer extended'],
+         ['ok','Call logged — FAQ outcome: information provided'],
+         ['ok','Owner summary: FAQ call, no booking (caller declined)'],
+       ],
+       crm:[
+         {l:'Call type',v:'FAQ — hours and location'},
+         {l:'Outcome',v:'Information provided'},
+         {l:'Booking offered',v:'Yes — declined'},
+         {l:'Call duration',v:'1m 12s',c:'bl'},
+         {l:'Status',v:'Logged',c:'gr'},
+       ]},
+    ],
+    metrics:[{n:'24/7',l:'Calls answered'},{n:'100%',l:'Leads captured'},{n:'Daily',l:'Owner summary sent'}],
+    outcome:"Every call gets answered, every FAQ handled, every lead booked or logged. The owner gets a daily summary — without being on the phone all day.",
+    roi:[
+      {l:'After-hours calls captured (est. 28% of volume)',v:'Significant lead recovery'},
+      {l:'FAQ handling automated (est. 60% of call volume)',v:'Staff time freed for real work'},
+      {l:'Lead capture rate: 0% after-hours → 100%',v:'Direct revenue recovery'},
+      {l:'System running cost',v:'< $90 NZD/month'},
+    ],
+    build:'$700–1,000 NZD',retainer:'$250–400/mo',delivery:'7–10 days'
+  }
+];
+
+// Per-niche state
+const state = {};
+niches.forEach(n=>{ state[n.id]={stage:0,scenario:0,visited:new Set([0]),callRun:false}; });
+let curNiche = 0;
+
+// ═══════ RENDER ENGINE ═══════
+function render(nid) {
+  const n = niches[nid];
+  const s = state[nid];
+  const el = document.getElementById('n'+nid);
+  el.innerHTML = buildNicheHTML(n, s);
+  // wire scenario buttons
+  el.querySelectorAll('.scbtn').forEach((b,i)=>b.addEventListener('click',()=>pickScenario(nid,i)));
+  // wire pain cards
+  el.querySelectorAll('.pcard').forEach((c,i)=>c.addEventListener('click',()=>trigPain(nid,i)));
+}
+
+function buildNicheHTML(n, s) {
+  const stages = ['Pain','AI Call','Live Log','CRM Result','Outcome'];
+  const icons  = ['😓','📱','⚙️','✅','🏆'];
+  const scen = n.scenarios[s.scenario];
+
+  let stageNavHTML = stages.map((st,i)=>{
+    let cls = 'sb';
+    if(i===s.stage) cls+=' active';
+    else if(s.visited.has(i)) cls+=' done';
+    return `<button class="${cls}" onclick="goStage(${n.id},${i})"><span class="snum">0${i+1}</span><span class="sico">${icons[i]}</span><span>${st}</span></button>`;
+  }).join('');
+
+  // Stage content
+  let stageHTML = '';
+
+  // STAGE 0: PAIN
+  if(s.stage===0) {
+    const painCards = n.pains.map((p,i)=>`
+      <div class="pcard" id="pc${n.id}-${i}">
+        <div class="pico">${p.ico}</div>
+        <div><div class="ptit">${p.tit}</div><div class="pbody">${p.body}</div><div class="pcost" id="pcost${n.id}-${i}"></div></div>
+      </div>`).join('');
+
+    const roiRows = n.roi.map(r=>`<div class="dr"><span class="dl">${r.l}</span><span class="dv ${r.c||''}">${r.v}</span></div>`).join('');
+
+    stageHTML = `
+      <div class="sh">
+        <div class="stag">Before LogicPrompt AI</div>
+        <div class="st">${n.clinic} — ${n.location}</div>
+        <div class="sd">Sound familiar? Click each frustration to see the real cost.</div>
+      </div>
+      <div class="pgrid">${painCards}</div>
+      <div class="cbox" style="margin-top:14px;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Annual cost of doing this manually</div>
+        <div class="drows">${roiRows}</div>
+      </div>
+      <div class="bnav"><div></div><div class="bi">STAGE 1 OF 5</div><button class="btn btn-blue" onclick="goStage(${n.id},1)">Watch the AI handle it →</button></div>`;
+  }
+
+  // STAGE 1: PICK SCENARIO + CALL
+  else if(s.stage===1) {
+    const scenBtns = n.scenarios.map((sc,i)=>`<button class="scbtn ${i===s.scenario?'active':''}">${sc.label}</button>`).join('');
+
+    stageHTML = `
+      <div class="sh">
+        <div class="stag">${getScenarioTime(n.id, s.scenario)}</div>
+        <div class="st">The AI answers instantly.<br>Pick a scenario to simulate.</div>
+        <div class="sd">Select a call scenario below, then watch the AI receptionist handle it in real time on the phone screen.</div>
+      </div>
+      <div class="scenario-btns">${scenBtns}</div>
+      <div class="tgrid">
+        <div>
+          <div class="phonewrap">
+            <div class="phone">
+              <div class="pnotch"></div>
+              <div class="pscreen">
+                <div class="ptop" style="background:${n.color}20;border-bottom:1px solid ${n.color}30;">
+                  <div class="pava" style="background:${n.color}">${n.icon}</div>
+                  <div style="flex:1"><div class="pnm">${n.clinic}</div><div class="pst" id="pst-${n.id}">● Ready</div></div>
+                </div>
+                <div class="pmsgs" id="pmsgs-${n.id}">
+                  <div class="bub sys">Incoming call connected</div>
+                </div>
+                <div class="pinput">
+                  <div class="pifield">Type a message...</div>
+                  <div class="pisend" style="background:${n.color}">➤</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:10px;">
+            <button class="btn btn-teal" id="runbtn-${n.id}" onclick="runCall(${n.id})" style="background:${n.color}">▶ Simulate call</button>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="chead"><div class="ctitle">AI system <em>log</em></div><span class="badge b-bl" id="logbadge-${n.id}">WAITING</span></div>
+            <div class="con">
+              <div class="conbar"><div class="cdot r"></div><div class="cdot y"></div><div class="cdot g"></div><span class="contit">logicprompt · voice-agent</span></div>
+              <div class="conbody" id="conlog-${n.id}" style="min-height:150px;"><div style="color:#475569;font-size:11px;">— awaiting call —</div></div>
+            </div>
+          </div>
+          <div id="callresult-${n.id}" style="display:none;">
+            <button class="btn btn-blue" onclick="goStage(${n.id},2)" style="width:100%;">See full system update →</button>
+          </div>
+        </div>
+      </div>
+      <div class="help">← Select a scenario above, then click "Simulate call" to watch the conversation and system log in real time.</div>
+      <div class="bnav"><button class="btn btn-ghost" onclick="goStage(${n.id},0)">← Back</button><div class="bi">STAGE 2 OF 5</div><button class="btn btn-blue" onclick="goStage(${n.id},2)">Skip to system update →</button></div>`;
+  }
+
+  // STAGE 2: LIVE LOG
+  else if(s.stage===2) {
+    const logLines = scen.log.map(l=>`<div class="tl show"><span class="tt">09:${14+scen.log.indexOf(l)}:${String(scen.log.indexOf(l)*3+2).padStart(2,'0')}</span><span class="tk ${l[0]}">[${l[0]==='ok'?' OK ':l[0]==='warn'?'WARN':l[0]==='err'?' ERR ':' INF '}]</span><span class="tm">${l[1]}</span></div>`).join('');
+
+    stageHTML = `
+      <div class="sh">
+        <div class="stag">System processing — under 60 seconds</div>
+        <div class="st">Everything handled automatically.</div>
+        <div class="sd">The call is finished. This is what the system did in the background — calendar updated, SMS sent, CRM logged. Zero staff involvement.</div>
+      </div>
+      <div class="card">
+        <div class="chead"><div class="ctitle">System <em>activity log</em></div><span class="badge b-gr">COMPLETE</span></div>
+        <div class="con">
+          <div class="conbar"><div class="cdot r"></div><div class="cdot y"></div><div class="cdot g"></div><span class="contit">logicprompt · all-systems</span></div>
+          <div class="conbody">${logLines}</div>
+        </div>
+      </div>
+      <div class="bnav"><button class="btn btn-ghost" onclick="goStage(${n.id},1)">← Back</button><div class="bi">STAGE 3 OF 5</div><button class="btn btn-blue" onclick="goStage(${n.id},3)">See CRM record →</button></div>`;
+  }
+
+  // STAGE 3: CRM RESULT
+  else if(s.stage===3) {
+    const crmRows = scen.crm.map(r=>`<div class="dr"><span class="dl">${r.l}</span><span class="dv ${r.c||''}">${r.v}</span></div>`).join('');
+    const metHTML = n.metrics.map(m=>`<div class="met"><div class="metn" style="color:${n.color}">${m.n}</div><div class="metl">${m.l}</div></div>`).join('');
+
+    stageHTML = `
+      <div class="sh">
+        <div class="stag">System record — auto-updated</div>
+        <div class="st">The outcome, in plain numbers.</div>
+        <div class="sd">Everything logged, booked, and sent. Zero manual entry.</div>
+      </div>
+      <div class="card">
+        <div class="chead"><div class="ctitle">CRM record — <em>auto-created</em></div><span class="badge b-gr">✓ LIVE</span></div>
+        <div class="drows">${crmRows}</div>
+      </div>
+      <div class="mets">${metHTML}</div>
+      <div class="bnav"><button class="btn btn-ghost" onclick="goStage(${n.id},2)">← Back</button><div class="bi">STAGE 4 OF 5</div><button class="btn btn-blue" onclick="goStage(${n.id},4)">See the outcome →</button></div>`;
+  }
+
+  // STAGE 4: OUTCOME
+  else if(s.stage===4) {
+    const roiRows = n.roi.map(r=>`<div class="dr"><span class="dl">${r.l}</span><span class="dv ${r.c||''}">${r.v}</span></div>`).join('');
+
+    stageHTML = `
+      <div class="sh">
+        <div class="stag">The outcome — ${n.clinic}</div>
+        <div class="st">What this means for your business.</div>
+      </div>
+      <div class="cmp">
+        <div class="cbef">
+          <div class="cmlab">Before</div>
+          ${n.pains.map(p=>`<div class="cmrow">${p.ico} ${p.tit}</div>`).join('')}
+        </div>
+        <div class="cmid">→</div>
+        <div class="caft">
+          <div class="cmlab">After LogicPrompt AI</div>
+          <div class="cmrow">⚡ Every call answered — 24/7</div>
+          <div class="cmrow">✅ Appointments booked automatically</div>
+          <div class="cmrow">📱 Confirmation + reminders sent</div>
+          <div class="cmrow">📊 CRM updated — zero manual entry</div>
+          <div class="cmrow">📬 Daily owner summary delivered</div>
+        </div>
+      </div>
+      <div class="card" style="background:var(--bg2);">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">ROI estimate — ${n.clinic}</div>
+        <div class="drows">${roiRows}</div>
+      </div>
+      <div class="price">
+        <div class="pitem"><div class="plbl">One-time build</div><div class="pval">${n.build}</div><div class="psub">NZD · Delivered ${n.delivery}</div></div>
+        <div class="pdiv"></div>
+        <div class="pitem"><div class="plbl">Monthly retainer</div><div class="pval">${n.retainer}</div><div class="psub">NZD/month · Optional</div></div>
+        <div class="pdiv"></div>
+        <div class="pitem"><div class="plbl">Payback period</div><div class="pval">< 30 days</div><div class="psub">Based on missed call recovery</div></div>
+      </div>
+      <button class="btn btn-blue btn-full" onclick="toast('📅','Booking flow opened — LogicPrompt AI scoping call')">Build this for my business ↗</button>
+      <div class="bnav"><button class="btn btn-ghost" onclick="goStage(${n.id},3)">← Back</button><div class="bi">STAGE 5 OF 5</div><button class="btn btn-ghost" onclick="resetNiche(${n.id})">↺ Run demo again</button></div>`;
+  }
+
+  return `
+    <div class="snav" id="snav-${n.id}">${stageNavHTML}</div>
+    <div class="stage on" id="stage-${n.id}">${stageHTML}</div>`;
+}
+
+function getScenarioTime(nid, sci) {
+  const times = [
+    ['After hours — 7:04 PM','Emergency call — 10:18 PM','New family patient inquiry'],
+    ['After hours — 5:45 PM','During treatment — new patient'],
+    ['New client call — afternoon','Existing client rebooking'],
+    ['After hours — 6:15 PM','Business hours — FAQ call'],
+  ];
+  return times[nid][sci] || 'Incoming call';
+}
+
+// ═══════ NAVIGATION ═══════
+function pickNiche(nid) {
+  curNiche = nid;
+  document.querySelectorAll('.ntab').forEach((t,i)=>t.classList.toggle('active',i===nid));
+  document.querySelectorAll('.ncontent').forEach((c,i)=>c.classList.toggle('on',i===nid));
+  if(!document.getElementById('n'+nid).innerHTML.trim()) render(nid);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goStage(nid, n) {
+  state[nid].stage = n;
+  state[nid].visited.add(n);
+  state[nid].callRun = false;
+  render(nid);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function pickScenario(nid, sci) {
+  state[nid].scenario = sci;
+  state[nid].callRun = false;
+  render(nid);
+}
+
+// ═══════ PAIN CARDS ═══════
+const painCosts = [
+  ['Est. $127,500/year in missed new patient revenue (DenteMax, 2025)','Est. $10,400/year in staff confirmation time','Est. $3,900/year in empty chair time from no-shows','75% of missed callers never call back — gone permanently'],
+  ['28% of bookings come after hours — all missed without AI','Est. $10,500/year in manual confirmation time (2 hrs/day)','Est. $33,700/year in no-show revenue at 18% rate, $120 avg.','Lost leads — competitors answer the next morning first'],
+  ['20 min × 25 sessions/week = 500 hrs/year on manual prep','Est. $14,000/year in reminder call admin time','Measurable client dropout between sessions without follow-up','Dr. Feld spends prep time that should go to clinical work'],
+  ['Every unanswered call is a lead sent to your competitor','$28–$40/hr staff time on questions AI answers instantly','No call log = no business intelligence about what patients want','28% of inquiries outside hours — dead ends without AI'],
+];
+
+function trigPain(nid, i) {
+  document.querySelectorAll(`[id^="pc${nid}-"]`).forEach((c,j)=>c.classList.toggle('hot',j===i));
+  const costEl = document.getElementById(`pcost${nid}-${i}`);
+  if(costEl) costEl.textContent = painCosts[nid][i];
+}
+
+// ═══════ CALL SIMULATION ═══════
+async function runCall(nid) {
+  const n = niches[nid];
+  const s = state[nid];
+  const scen = n.scenarios[s.scenario];
+  const btn = document.getElementById(`runbtn-${nid}`);
+  const logEl = document.getElementById(`conlog-${nid}`);
+  const msgsEl = document.getElementById(`pmsgs-${nid}`);
+  const badge = document.getElementById(`logbadge-${nid}`);
+  const pst = document.getElementById(`pst-${nid}`);
+  if(!btn||!logEl||!msgsEl) return;
+  btn.disabled = true; btn.textContent = '● Live...';
+  badge.textContent = 'LIVE'; badge.className = 'badge b-am';
+  pst.textContent = '● Connected';
+  logEl.innerHTML = '';
+  msgsEl.innerHTML = '<div class="bub sys">Call connected</div>';
+
+  for(const msg of scen.msgs) {
+    await sleep(msg.role==='sys'?600:900);
+    const bub = document.createElement('div');
+    bub.className = `bub ${msg.role==='pat'?'pat':msg.role==='sys'?'sys':'bot'}`;
+    if(msg.role==='bot') bub.style.background = n.color;
+    bub.textContent = msg.text;
+    const wrap = document.createElement('div');
+    wrap.style.cssText = `display:flex;flex-direction:column;align-items:${msg.role==='pat'?'flex-start':msg.role==='sys'?'center':'flex-end'}`;
+    wrap.appendChild(bub);
+    msgsEl.appendChild(wrap);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
+  await sleep(400);
+  // run system log
+  for(const[tag,msg] of scen.log) {
+    await sleep(280);
+    addLog(logEl, tag, msg);
+  }
+  badge.textContent = 'COMPLETE'; badge.className = 'badge b-gr';
+  pst.textContent = '✓ Call handled';
+  btn.textContent = '✓ Complete';
+  const res = document.getElementById(`callresult-${nid}`);
+  if(res) res.style.display = 'block';
+  s.callRun = true;
+  toast('✓', `${n.icon} ${n.scenarios[s.scenario].label} — handled automatically`);
+}
+
+function resetNiche(nid) {
+  state[nid] = {stage:0, scenario:0, visited:new Set([0]), callRun:false};
+  render(nid);
+  toast('↺','Demo reset — ready to run again');
+}
+
+function addLog(c, tag, msg) {
+  const t = new Date().toTimeString().slice(0,8);
+  const tags = {ok:'[ OK ]',warn:'[WARN]',err:'[ERR ]',inf:'[INFO]'};
+  const d = document.createElement('div'); d.className='tl';
+  d.innerHTML = `<span class="tt">${t}</span><span class="tk ${tag}">${tags[tag]||'[INFO]'}</span><span class="tm">${msg}</span>`;
+  c.appendChild(d); requestAnimationFrame(()=>d.classList.add('show'));
+  c.scrollTop = c.scrollHeight;
+}
+function toast(ico, msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('tico').textContent = ico;
+  document.getElementById('tmsg').textContent = msg;
+  t.classList.add('show'); clearTimeout(t._t);
+  t._t = setTimeout(()=>t.classList.remove('show'), 3200);
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// Init
+render(0);
+
+// Expose all functions to global scope so inline onclick attributes work
+window.pickNiche   = pickNiche;
+window.goStage     = goStage;
+window.pickScenario= pickScenario;
+window.trigPain    = trigPain;
+window.runCall     = runCall;
+window.resetNiche  = resetNiche;
+</script>
+</body>
+</html>
