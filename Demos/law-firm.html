@@ -232,16 +232,85 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   .price{flex-direction:column;align-items:flex-start;gap:10px;}
   .prd{display:none;}
 }
+
+/* Portfolio demo topbar */
+.demo-topbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem clamp(1rem, 5vw, 3rem);
+  background: rgba(10, 15, 30, 0.96);
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  backdrop-filter: blur(16px);
+  font-family: Inter, 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.demo-topbar a { text-decoration: none; }
+.demo-topbar__back,
+.demo-topbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #F0EEE9;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.demo-topbar__back { color: #F5A623; }
+.demo-topbar__back:hover { color: #FFFFFF; }
+.demo-topbar__brand { color: #FFFFFF; }
+.demo-topbar__brand span { color: #F5A623; }
+.demo-topbar__left {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+.demo-topbar__divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(255,255,255,0.14);
+}
+.demo-topbar__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0.46rem 1rem;
+  border-radius: 999px;
+  background: #F5A623;
+  color: #0A0F1E;
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 10px 28px rgba(245,166,35,0.22);
+}
+.demo-topbar__cta:hover { background: #FFB740; }
+@media (max-width: 560px) {
+  .demo-topbar { padding-inline: 1rem; }
+  .demo-topbar__brand,
+  .demo-topbar__divider { display: none; }
+  .demo-topbar__back,
+  .demo-topbar__cta { font-size: 0.78rem; }
+}
 </style>
 </head>
 <body>
-
-  <!-- DEMO NAV BAR -->
-<div style="position:fixed; top:0; left:0; right:0; z-index:9999; background:rgba(13,15,20,0.95); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,0.07); padding:0.75rem 5%; display:flex; align-items:center; justify-content:space-between; font-family:'DM Sans',sans-serif;">
-  <a href="../demos.html" style="color:#00cfff; font-size:0.85rem; font-weight:600; text-decoration:none;">← Back to Demos</a>
-  <a href="../index.html#contact" style="background:#00cfff; color:#000; padding:0.4rem 1rem; border-radius:100px; font-size:0.8rem; font-weight:700; text-decoration:none;">Book a Call</a>
-</div>
-<div style="height:52px;"></div>
+  <!-- PORTFOLIO DEMO TOPBAR -->
+  <nav class="demo-topbar" aria-label="Portfolio demo navigation">
+    <div class="demo-topbar__left">
+      <a href="../demos.html" class="demo-topbar__back">&larr; Back to Demos</a>
+      <div class="demo-topbar__divider" aria-hidden="true"></div>
+      <a href="../index.html" class="demo-topbar__brand">KA<span>.</span> Portfolio</a>
+    </div>
+    <a href="../index.html#contact" class="demo-topbar__cta">Book a Call</a>
+  </nav>
 
 <div class="app">
 
